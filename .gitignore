@@ -1,0 +1,79 @@
+# Visual Studio / VS Code
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+
+# Qt Creator
+*.pro.user
+*.qmake.stash
+*.autosave
+*.pro.user.*
+*.qmlproject.user*
+build-*/
+debug/
+release/
+
+# C++ 編譯產物
+*.obj
+*.o
+*.gch
+*.pch
+*.pdb
+*.ilk
+*.idb
+*.exp
+*.lib
+*.dll
+*.exe
+*.out
+*.so
+*.a
+*.dylib
+
+# Qt 設計檔與中間檔
+*.moc
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+*.ipch
+
+# YOLO 模型或 AI 檔案（避免誤上傳數百 MB）
+*.weights
+*.onnx
+*.pt
+*.tflite
+*.pb
+*.h5
+*.ckpt
+
+# Python 編譯與快取檔案（如有使用 Python）
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg
+*.egg-info/
+*.pkl
+
+# 暫存 / 中間檔 / 快取
+*.log
+*.tmp
+*.bak
+*.db
+*.swp
+*.DS_Store
+Thumbs.db
+
+# VS Code 設定
+.vscode/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Git LFS 建議（如需使用）
+# git lfs track "*.pt"
+# git lfs track "*.onnx"
+# git lfs track "*.ipch"
