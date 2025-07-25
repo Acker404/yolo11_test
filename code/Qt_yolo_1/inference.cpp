@@ -10,7 +10,7 @@ Inference::Inference(const std::string &onnxModelPath, const cv::Size &modelInpu
     cudaEnabled = runWithCuda;
 
     loadOnnxNetwork();
-    // loadClassesFromFile(); The classes are hard-coded for this example
+    //loadClassesFromFile(); //The classes are hard-coded for this example
 }
 
 std::vector<Detection> Inference::runInference(const cv::Mat &input)
@@ -39,9 +39,12 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
         yolov8 = true;
         rows = outputs[0].size[2];
         dimensions = outputs[0].size[1];
+        // 你的模型為 [1, 7, 18900]，需要 reshape 為 [18900, 7]
+        outputs[0] = outputs[0].reshape(1, 7); // (7, 18900)
+        cv::transpose(outputs[0], outputs[0]); // (18900, 7)
 
-        outputs[0] = outputs[0].reshape(1, dimensions);
-        cv::transpose(outputs[0], outputs[0]);
+        //outputs[0] = outputs[0].reshape(1, dimensions);
+        //cv::transpose(outputs[0], outputs[0]);
     }
     float *data = (float *)outputs[0].data;
 
@@ -53,31 +56,32 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
     {
         if (yolov8)
         {
-            float *classes_scores = data+4;
-
-            cv::Mat scores(1, classes.size(), CV_32FC1, classes_scores);
-            cv::Point class_id;
-            double maxClassScore;
-
-            minMaxLoc(scores, 0, &maxClassScore, 0, &class_id);
-
-            if (maxClassScore > modelScoreThreshold)
+            float confidence = data[4];
+            if (confidence >= modelConfidenceThreshold)
             {
-                confidences.push_back(maxClassScore);
-                class_ids.push_back(class_id.x);
+                float* class_scores = data + 5;
+                cv::Mat scores(1, classes.size(), CV_32FC1, class_scores);
+                cv::Point class_id;
+                double max_class_score;
+                minMaxLoc(scores, 0, &max_class_score, 0, &class_id);
 
-                float x = data[0];
-                float y = data[1];
-                float w = data[2];
-                float h = data[3];
+                if (max_class_score > modelScoreThreshold)
+                {
+                    confidences.push_back(confidence * max_class_score);
+                    class_ids.push_back(class_id.x);
 
-                int left = int((x - 0.5 * w - pad_x) / scale);
-                int top = int((y - 0.5 * h - pad_y) / scale);
+                    float x = data[0];
+                    float y = data[1];
+                    float w = data[2];
+                    float h = data[3];
 
-                int width = int(w / scale);
-                int height = int(h / scale);
+                    int left = int((x - 0.5 * w - pad_x) / scale);
+                    int top = int((y - 0.5 * h - pad_y) / scale);
+                    int width = int(w / scale);
+                    int height = int(h / scale);
 
-                boxes.push_back(cv::Rect(left, top, width, height));
+                    boxes.push_back(cv::Rect(left, top, width, height));
+                }
             }
         }
         else // yolov5
@@ -174,6 +178,7 @@ void Inference::loadOnnxNetwork()
         net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
     }
 }
+
 
 cv::Mat Inference::formatToSquare(const cv::Mat &source, int *pad_x, int *pad_y, float *scale)
 {
