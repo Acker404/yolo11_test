@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\inference.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|solutionrelative:inference.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|solutionrelative:Qt_yolo_1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -22,11 +26,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
+              "Title": "inference.cpp",
+              "DocumentMoniker": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\inference.cpp",
+              "RelativeDocumentMoniker": "inference.cpp",
+              "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\inference.cpp*",
+              "RelativeToolTip": "inference.cpp*",
+              "ViewState": "AgIAAI4AAAAAAAAAAAAUwKIAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-07-25T00:31:56.952Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "inference.h",
               "DocumentMoniker": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\inference.h",
               "RelativeDocumentMoniker": "inference.h",
@@ -34,12 +51,11 @@
               "RelativeToolTip": "inference.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-06-23T06:53:11.321Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-23T06:53:11.321Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Qt_yolo_1.h",
               "DocumentMoniker": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.h",
               "RelativeDocumentMoniker": "Qt_yolo_1.h",
@@ -47,18 +63,17 @@
               "RelativeToolTip": "Qt_yolo_1.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-06-23T06:49:52.244Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-23T06:49:52.244Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Qt_yolo_1.cpp",
               "DocumentMoniker": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp",
               "RelativeDocumentMoniker": "Qt_yolo_1.cpp",
               "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp",
               "RelativeToolTip": "Qt_yolo_1.cpp",
-              "ViewState": "AgIAABIAAAAAAAAAAAAAAAwAAAAxAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAABLAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-06-23T03:43:29.215Z",
               "EditorCaption": ""

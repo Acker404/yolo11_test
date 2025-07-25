@@ -1,4 +1,6 @@
 "# yolo11_test" 
+## ref
+https://github.com/ultralytics/ultralytics?tab=readme-ov-file
 
 ## lib
 pip install ultralytics  \\\

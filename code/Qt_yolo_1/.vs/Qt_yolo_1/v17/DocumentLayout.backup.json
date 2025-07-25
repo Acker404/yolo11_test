@@ -34,8 +34,7 @@
               "RelativeToolTip": "inference.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-06-23T06:53:11.321Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-23T06:53:11.321Z"
             },
             {
               "$type": "Document",
@@ -47,8 +46,7 @@
               "RelativeToolTip": "Qt_yolo_1.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-06-23T06:49:52.244Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-23T06:49:52.244Z"
             },
             {
               "$type": "Document",
@@ -56,9 +54,9 @@
               "Title": "Qt_yolo_1.cpp",
               "DocumentMoniker": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp",
               "RelativeDocumentMoniker": "Qt_yolo_1.cpp",
-              "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp*",
-              "RelativeToolTip": "Qt_yolo_1.cpp*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAxAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp",
+              "RelativeToolTip": "Qt_yolo_1.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAABLAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-06-23T03:43:29.215Z",
               "EditorCaption": ""
