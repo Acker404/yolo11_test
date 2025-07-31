@@ -37,7 +37,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>QtDesignStudio-4.1.1-lts_qt6_design_studio_reduced_version</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;multimedia;multimediawidgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
@@ -97,11 +97,13 @@
     <QtRcc Include="Qt_yolo_1.qrc" />
     <QtUic Include="Qt_yolo_1.ui" />
     <QtMoc Include="Qt_yolo_1.h" />
+    <ClCompile Include="imageview.cpp" />
     <ClCompile Include="inference.cpp" />
     <ClCompile Include="Qt_yolo_1.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="imageview.h" />
     <ClInclude Include="inference.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

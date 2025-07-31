@@ -14,7 +14,10 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
 	std::string classesPath = "C:/Users/mark9/Desktop/yolo11_test/classes.txt"; // Path to your classes file
 	pIntf_ = new Inference(modelPath, cv::Size(960, 960), classesPath, runOnGPU);
 
-    QObject::connect(ui.open, &QPushButton::clicked, this, [=]() {  
+    view = new ImageView(this);
+    ui.layout_media->addWidget(view);
+  
+    QObject::connect(ui.Button_openImage, &QPushButton::clicked, this, [=]() {  
         QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Images (*.png *.jpg *.bmp)"));  
         if (!fileName.isEmpty()) {  
 			QImage image(fileName);
@@ -23,7 +26,6 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
             cv::Mat input_bgr;
             cv::cvtColor(frame, input_bgr, cv::COLOR_RGB2BGR);
             std::vector<Detection> output = pIntf_->runInference(input_bgr);
-
             int detections = output.size();
             std::cout << "Number of detections:" << detections << std::endl;
 
@@ -46,7 +48,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
                 //cv::Size textSize = cv::getTextSize(classString, cv::FONT_HERSHEY_DUPLEX, 1, 2, 0);
                 //cv::Rect textBox(box.x, box.y - 40, textSize.width + 10, textSize.height + 20);
                 //cv::rectangle(input_bgr, textBox, color, cv::FILLED);
-                std::string classString = detection.className + " " + std::to_string(detection.confidence).substr(0, 4);
+                std::string classString = detection.className + " " + std::to_string(detection.confidence).substr(0, 2);
 
                 // 1. 根據圖片大小自動計算文字大小
                 int imgHeight = input_bgr.rows;
@@ -85,6 +87,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
             //cv::resize(input_bgr, input_bgr, cv::Size(input_bgr.cols * scale, input_bgr.rows * scale));
             cv::resize(input_bgr, input_bgr, cv::Size(1280, 960));
             cv::imshow("Inference", input_bgr);
+            view->loadImage(input_bgr);
         }  
     });  
 }  

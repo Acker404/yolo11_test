@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\inference.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|solutionrelative:inference.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|solutionrelative:Qt_yolo_1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\imageview.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|solutionrelative:imageview.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\inference.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -21,6 +21,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\inference.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{3059AD9A-488F-4A53-9EEB-3178C8428BCD}|Qt_yolo_1.vcxproj|solutionrelative:inference.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,20 +34,31 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
+              "Title": "imageview.h",
+              "DocumentMoniker": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\imageview.h",
+              "RelativeDocumentMoniker": "imageview.h",
+              "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\imageview.h",
+              "RelativeToolTip": "imageview.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-31T20:27:06.608Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "inference.h",
               "DocumentMoniker": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\inference.h",
               "RelativeDocumentMoniker": "inference.h",
-              "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\inference.h*",
-              "RelativeToolTip": "inference.h*",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAACgAAABfAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\inference.h",
+              "RelativeToolTip": "inference.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-07-25T18:43:41.579Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-25T18:43:41.579Z"
             },
             {
               "$type": "Document",
@@ -55,8 +70,7 @@
               "RelativeToolTip": "main.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-07-25T17:59:27.677Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-25T17:59:27.677Z"
             },
             {
               "$type": "Document",
@@ -68,18 +82,17 @@
               "RelativeToolTip": "Qt_yolo_1.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-06-23T06:49:52.244Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-23T06:49:52.244Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Qt_yolo_1.cpp",
               "DocumentMoniker": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp",
               "RelativeDocumentMoniker": "Qt_yolo_1.cpp",
-              "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp",
-              "RelativeToolTip": "Qt_yolo_1.cpp",
-              "ViewState": "AgIAABQAAAAAAAAAAAAcwCoAAAASAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp*",
+              "RelativeToolTip": "Qt_yolo_1.cpp*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-06-23T03:43:29.215Z",
               "EditorCaption": ""
@@ -92,10 +105,9 @@
               "RelativeDocumentMoniker": "inference.cpp",
               "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\inference.cpp",
               "RelativeToolTip": "inference.cpp",
-              "ViewState": "AgIAAJAAAAAAAAAAAAAcwKwAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-07-25T01:09:05.9Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-25T01:09:05.9Z"
             }
           ]
         }
