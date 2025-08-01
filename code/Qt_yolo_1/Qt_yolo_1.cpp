@@ -50,25 +50,25 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
                 //cv::rectangle(input_bgr, textBox, color, cv::FILLED);
                 std::string classString = detection.className + " " + std::to_string(detection.confidence).substr(0, 2);
 
-                // 1. ®Ú¾Ú¹Ï¤ù¤j¤p¦Û°Ê­pºâ¤å¦r¤j¤p
+                // 1. ï¿½Ú¾Ú¹Ï¤ï¿½ï¿½jï¿½pï¿½Û°Ê­pï¿½ï¿½ï¿½rï¿½jï¿½p
                 int imgHeight = input_bgr.rows;
                 int imgWidth = input_bgr.cols;
-                double scaleFactor = std::max(0.5, std::min(1.0, imgHeight / 720.0)); // «ØÄ³¤ñ¨Ò½d³ò 0.5 ~ 1.0
+                double scaleFactor = std::max(0.5, std::min(1.0, imgHeight / 720.0)); // ï¿½ï¿½Ä³ï¿½ï¿½Ò½dï¿½ï¿½ 0.5 ~ 1.0
                 int fontThickness = std::round(2 * scaleFactor);
                 double fontScale = 0.6 * scaleFactor;
 
-                // 2. ­pºâ¤å¦r°Ï¶ô¤j¤p
+                // 2. ï¿½pï¿½ï¿½ï¿½rï¿½Ï¶ï¿½ï¿½jï¿½p
                 cv::Size textSize = cv::getTextSize(classString, cv::FONT_HERSHEY_DUPLEX, fontScale, fontThickness, 0);
 
-                // 3. §PÂ_©ñ¤å¦r¦b¤W­±ÁÙ¬O¤U­±¡AÁ×§K¶W¥Xµe­±
+                // 3. ï¿½Pï¿½_ï¿½ï¿½ï¿½rï¿½bï¿½Wï¿½ï¿½ï¿½Ù¬Oï¿½Uï¿½ï¿½ï¿½Aï¿½×§Kï¿½Wï¿½Xï¿½eï¿½ï¿½
                 int label_x = box.x;
                 int label_y = (box.y - textSize.height - 10 > 0) ? box.y - 10 : box.y + box.height + textSize.height + 10;
 
-                // 4. ©w¸q¤å¦r­I´º®Ø
+                // 4. ï¿½wï¿½qï¿½ï¿½rï¿½Iï¿½ï¿½ï¿½ï¿½
                 cv::Rect textBox(label_x, label_y - textSize.height, textSize.width + 10, textSize.height + 10);
-                textBox &= cv::Rect(0, 0, input_bgr.cols, input_bgr.rows); // µô¤Á¨¾¤î¶W¥XÃä¬É
+                textBox &= cv::Rect(0, 0, input_bgr.cols, input_bgr.rows); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½Xï¿½ï¿½ï¿½
 
-                // 5. µe­I´º»P¤å¦r
+                // 5. ï¿½eï¿½Iï¿½ï¿½ï¿½Pï¿½ï¿½r
                 cv::rectangle(input_bgr, textBox, detection.color, cv::FILLED);
                 cv::putText(input_bgr, classString, cv::Point(label_x + 5, label_y - 2),
                     cv::FONT_HERSHEY_DUPLEX, fontScale, cv::Scalar(0, 0, 0), fontThickness);
@@ -81,12 +81,12 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
             }
             // Inference ends here...
 
-            // This is only for preview purposes       
-            
+            // This is only for preview purposes
+
             float scale = 0.8;
             //cv::resize(input_bgr, input_bgr, cv::Size(input_bgr.cols * scale, input_bgr.rows * scale));
             cv::resize(input_bgr, input_bgr, cv::Size(1280, 960));
-            cv::imshow("Inference", input_bgr);
+            //cv::imshow("Inference", input_bgr);
             view->loadImage(input_bgr);
         }  
     });  

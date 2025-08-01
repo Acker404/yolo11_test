@@ -1,84 +1,19 @@
 ﻿   Qt/MSBuild: 3.4.0.1
    Qt: 6.9.1
-  moc Qt_yolo_1.h
+  moc imageview.h
+  imageview.cpp
   Qt_yolo_1.cpp
   main.cpp
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xa68 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xa6f 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xa70 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xa72 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xa74 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xa7a 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xa7b 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xa7e 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xa80 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xa82 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xb40 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xb41 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xb43 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xb44 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xb45 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xb4a 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xb4b 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xbe9 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xbeb 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xbec 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xbef 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xbf1 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xbf4 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xc8c 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xc8e 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xc90 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xc91 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xc96 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xc98 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xc9a 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xc9b 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xc9c 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xca0 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xca2 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xca3 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xca4 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xca6 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xcaa 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xcac 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xcae 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xcb0 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xcb1 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xd6e 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xd70 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xd72 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xd73 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xd76 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xd78 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xd79 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xd7a 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xd7b 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe3e 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe3f 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe43 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe44 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe45 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe48 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe4a 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe4c 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe4d 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe68 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe6a 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe6c 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe6d 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe6e 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe70 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(1,1): warning C4828: 檔案包含起始於位移 0xe71 的字元，在目前的來源字元集 (字碼頁 65001) 中不是合法的字元。
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
-  (編譯來源檔案 'Qt_yolo_1.cpp')
-  
 C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
   (編譯來源檔案 'main.cpp')
+  
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
+  (編譯來源檔案 'Qt_yolo_1.cpp')
   
 C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(29,28): warning C4267: '正在初始化': 將 'size_t' 轉換為 'int'，資料可能遺失
 C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(86,25): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
   moc_Qt_yolo_1.cpp
+  moc_imageview.cpp
 C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
   (編譯來源檔案 'Qt_yolo_1/x64/Debug/qt/moc/moc_Qt_yolo_1.cpp')
   

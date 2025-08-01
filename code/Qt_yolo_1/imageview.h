@@ -7,14 +7,15 @@
 #include <QGraphicsVideoItem>
 #include <QMediaPlayer>
 #include <QVideoSink>
-void loadImage(const cv::Mat &image);
-#include "imageview.h"  
-#include <QPixmap>  
-#include <QImage>  
-
-
-//view->loadImage(input_bgr);
+#include <QPixmap>
 #include <QImage>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/dnn.hpp>
+
+namespace cv {
+    class Mat;
+}
 
 class ImageView : public QGraphicsView {
     Q_OBJECT
@@ -22,6 +23,7 @@ class ImageView : public QGraphicsView {
 public:
     explicit ImageView(QWidget *parent = nullptr);
     void loadImage(const QString &path);
+    void loadImage(const cv::Mat &image);
     void loadVideo(const QString &path);
     void play();
     void pause();

@@ -40,6 +40,24 @@ ImageView::ImageView(QWidget *parent)
     //connect(videoSink, &QVideoSink::videoFrameChanged, this, &ImageView::handleVideoFrame);
 }
 
+void ImageView::loadImage(const cv::Mat &image) {
+    if (mediaPlayer && mediaPlayer->playbackState() != QMediaPlayer::StoppedState)
+        mediaPlayer->stop();
+
+    scene->clear();
+    item = nullptr;
+    videoItem = nullptr;
+
+    QImage qimg(image.data, image.cols, image.rows, image.step, QImage::Format_BGR888);
+    QPixmap pixmap = QPixmap::fromImage(qimg);
+
+    if (!pixmap.isNull()) {
+        item = scene->addPixmap(pixmap);
+        scene->setSceneRect(pixmap.rect());
+        resetTransform();
+    }
+}
+
 void ImageView::loadImage(const QString &path) {
     if (mediaPlayer && mediaPlayer->playbackState() != QMediaPlayer::StoppedState)
         mediaPlayer->stop();
