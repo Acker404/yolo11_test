@@ -16,6 +16,7 @@
 build-*/
 debug/
 release/
+x64/
 
 # C++ 編譯產物
 *.obj
@@ -51,6 +52,7 @@ ui_*.h
 *.ckpt
 
 # Python 編譯與快取檔案（如有使用 Python）
+yolo11/
 __pycache__/
 *.py[cod]
 *.pyo

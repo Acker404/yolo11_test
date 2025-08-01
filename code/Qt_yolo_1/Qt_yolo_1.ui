@@ -60,7 +60,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="Button_stop">
+         <widget class="QPushButton" name="Button_Detection_stop">
           <property name="text">
            <string>停止</string>
           </property>

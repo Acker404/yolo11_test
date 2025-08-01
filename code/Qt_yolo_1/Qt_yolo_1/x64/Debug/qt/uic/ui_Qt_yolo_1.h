@@ -35,7 +35,7 @@ public:
     QPushButton *Button_exportPath;
     QHBoxLayout *horizontalLayout_3;
     QPushButton *Button_Detection;
-    QPushButton *Button_stop;
+    QPushButton *Button_Detection_stop;
     QVBoxLayout *verticalLayout_3;
     QHBoxLayout *horizontalLayout_4;
     QCheckBox *checkBox_2;
@@ -92,10 +92,10 @@ public:
 
         horizontalLayout_3->addWidget(Button_Detection);
 
-        Button_stop = new QPushButton(centralWidget);
-        Button_stop->setObjectName("Button_stop");
+        Button_Detection_stop = new QPushButton(centralWidget);
+        Button_Detection_stop->setObjectName("Button_Detection_stop");
 
-        horizontalLayout_3->addWidget(Button_stop);
+        horizontalLayout_3->addWidget(Button_Detection_stop);
 
 
         verticalLayout->addLayout(horizontalLayout_3);
@@ -187,7 +187,7 @@ public:
         labelpicture->setText(QString());
         Button_exportPath->setText(QCoreApplication::translate("Qt_yolo_1Class", "\350\250\255\345\256\232\350\274\270\345\207\272\350\267\257\345\276\221", nullptr));
         Button_Detection->setText(QCoreApplication::translate("Qt_yolo_1Class", "\345\225\237\347\224\250\345\201\265\346\270\254", nullptr));
-        Button_stop->setText(QCoreApplication::translate("Qt_yolo_1Class", "\345\201\234\346\255\242", nullptr));
+        Button_Detection_stop->setText(QCoreApplication::translate("Qt_yolo_1Class", "\345\201\234\346\255\242", nullptr));
         checkBox_2->setText(QCoreApplication::translate("Qt_yolo_1Class", "\346\250\231\346\241\206", nullptr));
         checkBox->setText(QCoreApplication::translate("Qt_yolo_1Class", "\351\246\254\350\263\275\345\205\213", nullptr));
         Button_export->setText(QCoreApplication::translate("Qt_yolo_1Class", "\350\274\270\345\207\272", nullptr));

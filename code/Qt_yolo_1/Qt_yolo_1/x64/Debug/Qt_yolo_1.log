@@ -1,7 +1,5 @@
 ﻿   Qt/MSBuild: 3.4.0.1
    Qt: 6.9.1
-  moc imageview.h
-  imageview.cpp
   Qt_yolo_1.cpp
   main.cpp
 C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
@@ -10,8 +8,8 @@ C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4
 C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
   (編譯來源檔案 'Qt_yolo_1.cpp')
   
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(29,28): warning C4267: '正在初始化': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(86,25): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(61,24): warning C4267: '正在初始化': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.cpp(96,24): warning C4267: '正在初始化': 將 'size_t' 轉換為 'int'，資料可能遺失
   moc_Qt_yolo_1.cpp
   moc_imageview.cpp
 C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
