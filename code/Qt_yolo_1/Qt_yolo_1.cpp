@@ -2,6 +2,55 @@
 #include <QFileDialog>
 #include <QFileInfo>
 
+// Helper function to draw detections with auto-sizing and positioning
+void drawDetection(cv::Mat& frame, const Detection& detection)
+{
+    // --- Auto-adjusting thickness based on image size ---
+    int thickness = std::max(1, (int)(frame.cols / 720.0 * 1.5));
+
+    // Draw the bounding box for the detection
+    cv::rectangle(frame, detection.box, detection.color, thickness);
+
+    // Create the label text (class name + confidence)
+    std::string label = detection.className + " " + std::to_string(detection.confidence).substr(0, 4);
+
+    // --- Use a fixed font size (pt) ---
+   // double fontScale = 0.7; // This value can be tuned to look like 20pt
+    int targetHeight = 20;
+    double fontScale = 0.1;
+    int baseline = 0;
+    cv::Size textSize;
+    while (true) {
+        cv::Size textSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, fontScale, 1, &baseline);
+        if (textSize.height >= targetHeight)
+            break;
+        fontScale += 0.1;
+    }
+
+    //int baseline = 0;
+    //cv::Size textSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, fontScale, thickness, &baseline);
+
+    // --- Intelligent positioning for the label ---
+    cv::Point labelOrigin = cv::Point(detection.box.x, detection.box.y - 10);
+    if (labelOrigin.y - textSize.height < 0) {
+        labelOrigin.y = detection.box.y + textSize.height + 5;
+    }
+
+    cv::Rect labelBackground(labelOrigin.x, labelOrigin.y - textSize.height - baseline, textSize.width, textSize.height + baseline + 5);
+    // Constrain the background to stay within the image
+    if (labelBackground.x < 0) labelBackground.x = 0;
+    if (labelBackground.y < 0) labelBackground.y = 0;
+    if (labelBackground.x + labelBackground.width > frame.cols) {
+        labelBackground.x = frame.cols - labelBackground.width;
+    }
+    if (labelBackground.y + labelBackground.height > frame.rows) {
+        labelBackground.y = frame.rows - labelBackground.height;
+    }
+    
+    cv::rectangle(frame, labelBackground, detection.color, cv::FILLED);
+    cv::putText(frame, label, cv::Point(labelBackground.x, labelBackground.y + textSize.height), cv::FONT_HERSHEY_SIMPLEX, fontScale, cv::Scalar(0, 0, 0), thickness);
+}
+
 cv::Mat QimageToMat(const QImage& image)
 {
     QImage convertedImage = image.convertToFormat(QImage::Format_RGB888);
@@ -81,17 +130,8 @@ void Qt_yolo_1::startDetection()
 
     if (!currentImage_.empty()) {
         std::vector<Detection> output = pIntf_->runInference(currentImage_);
-        int detections = output.size();
-        std::cout << "Number of detections:" << detections << std::endl;
-
-        for (int i = 0; i < detections; ++i)
-        {
-            Detection detection = output[i];
-            cv::Rect box = detection.box;
-            cv::Scalar color = detection.color;
-            cv::rectangle(currentImage_, box, color, 2);
-            std::string classString = detection.className + " " + std::to_string(detection.confidence).substr(0, 4);
-            cv::putText(currentImage_, classString, cv::Point(box.x, box.y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
+        for (const auto& detection : output) {
+            drawDetection(currentImage_, detection);
         }
         view->loadImage(currentImage_);
     } else if (!currentVideoPath_.isEmpty()) {
@@ -122,16 +162,8 @@ void Qt_yolo_1::processVideoFrame()
         frameCounter_++;
         if (frameCounter_ % ui.spinBox_detect_frame_set->value() == 0) {
             std::vector<Detection> output = pIntf_->runInference(frame);
-            int detections = output.size();
-
-            for (int i = 0; i < detections; ++i)
-            {
-                Detection detection = output[i];
-                cv::Rect box = detection.box;
-                cv::Scalar color = detection.color;
-                cv::rectangle(frame, box, color, 2);
-                std::string classString = detection.className + " " + std::to_string(detection.confidence).substr(0, 4);
-                cv::putText(frame, classString, cv::Point(box.x, box.y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
+            for (const auto& detection : output) {
+                drawDetection(frame, detection);
             }
             view->loadImage(frame);
         }
