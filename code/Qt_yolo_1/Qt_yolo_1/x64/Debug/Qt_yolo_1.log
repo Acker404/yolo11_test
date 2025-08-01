@@ -1,6 +1,8 @@
 ﻿   Qt/MSBuild: 3.4.0.1
    Qt: 6.9.1
+  moc imageview.h
   Qt_yolo_1.cpp
+  imageview.cpp
   main.cpp
 C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
   (編譯來源檔案 'main.cpp')

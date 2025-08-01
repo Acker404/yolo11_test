@@ -88,7 +88,9 @@ void ImageView::loadVideo(const QString &path) {
     item = nullptr;
     videoItem = new QGraphicsVideoItem;
     scene->addItem(videoItem);
-    resizeVideoItem();  // 安全執行（下一步優化）
+    connect(videoItem, &QGraphicsVideoItem::nativeSizeChanged, this, [=](const QSizeF &size) {
+        fitInView(videoItem, Qt::KeepAspectRatio);
+    });
 
     mediaPlayer->setVideoOutput(videoItem);
     mediaPlayer->setSource(QUrl::fromLocalFile(path));
@@ -105,32 +107,6 @@ void ImageView::pause() {
         mediaPlayer->pause();
 }
 
-
-
-/*void ImageView::handleVideoFrame(const QVideoFrame &frame) {
-    if (!frame.isValid()) return;
-
-    QImage image = frame.toImage();
-
-    if (image.isNull()) {
-        qDebug() << "[ImageView] QVideoFrame.toImage() failed. Format:" << frame.pixelFormat();
-        return;
-    }
-
-    QPixmap pixmap = QPixmap::fromImage(image);
-
-    if (!item) {
-        item = scene->addPixmap(pixmap);
-    } else {
-        item->setPixmap(pixmap);
-    }
-
-    scene->setSceneRect(pixmap.rect());
-    update();  // ← 強制更新 View
-}*/
-
-
-
 void ImageView::wheelEvent(QWheelEvent *event) {
     const double scaleFactor = 1.15;
     if (event->angleDelta().y() > 0)
@@ -139,24 +115,13 @@ void ImageView::wheelEvent(QWheelEvent *event) {
         scale(1.0 / scaleFactor, 1.0 / scaleFactor);
 }
 
-void ImageView::resizeVideoItem() {
-    if (!videoItem)
-        return;
-
-    QSizeF viewSize = size();
-    QSizeF videoSize = videoItem->nativeSize();
-
-    if (videoSize.isEmpty()) {
-        qDebug() << "[ImageView] nativeSize() is empty.";
-        return;
+void ImageView::resizeEvent(QResizeEvent *event) {
+    QGraphicsView::resizeEvent(event);
+    if (item) {
+        fitInView(item, Qt::KeepAspectRatio);
+    } else if (videoItem) {
+        fitInView(videoItem, Qt::KeepAspectRatio);
     }
-
-    qreal scale = qMin(viewSize.width() / videoSize.width(),
-                       viewSize.height() / videoSize.height());
-
-    videoItem->setTransform(QTransform::fromScale(scale, scale));
-    videoItem->setPos((viewSize.width() - videoSize.width() * scale) / 2,
-                      (viewSize.height() - videoSize.height() * scale) / 2);
 }
 
 

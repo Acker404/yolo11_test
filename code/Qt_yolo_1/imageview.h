@@ -29,19 +29,17 @@ public:
     void loadVideo(const QString &path);
     void play();
     void pause();
-    void resizeVideoItem();
+
 protected:
     void wheelEvent(QWheelEvent *event) override;
-
-private slots:
-    //void handleVideoFrame(const QVideoFrame &frame);
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     QGraphicsScene *scene;
     QGraphicsPixmapItem *item = nullptr;
     QMediaPlayer *mediaPlayer = nullptr;
-    //QVideoSink *videoSink = nullptr;
     QGraphicsVideoItem *videoItem = nullptr;
+
 signals:
     void mediaInfoAvailable(const QString &info);
     void durationChanged(qint64 duration);
