@@ -33,11 +33,6 @@ ImageView::ImageView(QWidget *parent)
             this, &ImageView::durationChanged);
     connect(mediaPlayer, &QMediaPlayer::positionChanged,
             this, &ImageView::positionChanged);
-
-    //videoSink = new QVideoSink(this);
-   // mediaPlayer->setVideoSink(videoSink);
-
-    //connect(videoSink, &QVideoSink::videoFrameChanged, this, &ImageView::handleVideoFrame);
 }
 
 void ImageView::loadImage(const cv::Mat &image) {
@@ -54,7 +49,7 @@ void ImageView::loadImage(const cv::Mat &image) {
     if (!pixmap.isNull()) {
         item = scene->addPixmap(pixmap);
         scene->setSceneRect(pixmap.rect());
-        resetTransform();
+        fitInView(item, Qt::KeepAspectRatio);
     }
 }
 
@@ -70,15 +65,16 @@ void ImageView::loadImage(const QString &path) {
     if (!pixmap.isNull()) {
         item = scene->addPixmap(pixmap);
         scene->setSceneRect(pixmap.rect());
-        resetTransform();
+        fitInView(item, Qt::KeepAspectRatio);
+
         QFileInfo info(path);
         QString fileName = info.fileName();
         QString ext = info.suffix();
-        QString infoText = QString("圖片: %1, 副檔名: %2, 解析度: %3x%4")
-                               .arg(fileName).arg(ext).arg(pixmap.width()).arg(pixmap.height());
+        qint64 fileSize = info.size();
+        QString infoText = QString("圖片: %1, 副檔名: %2, 解析度: %3x%4, 檔案大小: %5 KB")
+                               .arg(fileName).arg(ext).arg(pixmap.width()).arg(pixmap.height()).arg(fileSize / 1024);
 
         emit mediaInfoAvailable(infoText);
-
     }
 }
 
@@ -123,5 +119,3 @@ void ImageView::resizeEvent(QResizeEvent *event) {
         fitInView(videoItem, Qt::KeepAspectRatio);
     }
 }
-
-

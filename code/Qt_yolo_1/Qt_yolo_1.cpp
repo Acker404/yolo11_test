@@ -1,5 +1,6 @@
 #include "Qt_yolo_1.h"
 #include <QFileDialog>
+#include <QFileInfo>
 
 cv::Mat QimageToMat(const QImage& image)
 {
@@ -28,6 +29,11 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
             currentImage_ = cv::imread(fileName.toLocal8Bit().constData());
             view->loadImage(currentImage_);
             currentVideoPath_.clear();
+
+            QFileInfo info(fileName);
+            currentMediaInfo_ = QString("圖片: %1, 副檔名: %2, 解析度: %3x%4, 檔案大小: %5 KB")
+                               .arg(info.fileName()).arg(info.suffix()).arg(currentImage_.cols).arg(currentImage_.rows).arg(info.size() / 1024);
+            updateMediaInfoLabel();
         }
     });
 
@@ -42,6 +48,12 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
             cap_ = new cv::VideoCapture(currentVideoPath_.toLocal8Bit().constData());
             view->loadVideo(currentVideoPath_);
             currentImage_.release();
+
+            QFileInfo info(fileName);
+            double fps = cap_->get(cv::CAP_PROP_FPS);
+            currentMediaInfo_ = QString("影片: %1, 副檔名: %2, 解析度: %3x%4, FPS: %5")
+                               .arg(info.fileName()).arg(info.suffix()).arg((int)cap_->get(cv::CAP_PROP_FRAME_WIDTH)).arg((int)cap_->get(cv::CAP_PROP_FRAME_HEIGHT)).arg(fps);
+            updateMediaInfoLabel();
         }
     });
 
@@ -53,6 +65,10 @@ Qt_yolo_1::~Qt_yolo_1()
 {
     delete pIntf_;
     pIntf_ = nullptr;
+    if (cap_) {
+        cap_->release();
+        delete cap_;
+    }
 }
 
 void Qt_yolo_1::startDetection()
@@ -65,7 +81,7 @@ void Qt_yolo_1::startDetection()
         std::vector<Detection> output = pIntf_->runInference(currentImage_);
         int detections = output.size();
         std::cout << "Number of detections:" << detections << std::endl;
-
+        isDetectionRunning_ = true;
         for (int i = 0; i < detections; ++i)
         {
             Detection detection = output[i];
@@ -80,6 +96,7 @@ void Qt_yolo_1::startDetection()
         isDetectionRunning_ = true;
         videoTimer_->start(33); // ~30 FPS
     }
+    updateMediaInfoLabel();
 }
 
 void Qt_yolo_1::stopDetection()
@@ -90,6 +107,7 @@ void Qt_yolo_1::stopDetection()
 
     isDetectionRunning_ = false;
     videoTimer_->stop();
+    updateMediaInfoLabel();
 }
 
 void Qt_yolo_1::processVideoFrame()
@@ -112,4 +130,10 @@ void Qt_yolo_1::processVideoFrame()
     } else {
         stopDetection();
     }
+}
+
+void Qt_yolo_1::updateMediaInfoLabel()
+{
+    QString statusText = isDetectionRunning_ ? "偵測中" : "未偵測";
+    ui.label_media_info->setText(currentMediaInfo_ + "\n" + statusText);
 }

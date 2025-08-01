@@ -21,12 +21,15 @@ private slots:
     void processVideoFrame();
 
 private:
+    void updateMediaInfoLabel();
+
     Ui::Qt_yolo_1Class ui;
     ImageView* view = nullptr;
     Inference* pIntf_ {nullptr};
 
     cv::Mat currentImage_;
     QString currentVideoPath_;
+    QString currentMediaInfo_;
     bool isDetectionRunning_ = false;
     QTimer* videoTimer_ = nullptr;
     cv::VideoCapture* cap_ = nullptr;

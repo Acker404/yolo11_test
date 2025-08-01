@@ -30,7 +30,7 @@ public:
     QWidget *centralWidget;
     QHBoxLayout *horizontalLayout_2;
     QVBoxLayout *layout_media;
-    QLabel *labelpicture;
+    QLabel *label_media_info;
     QVBoxLayout *verticalLayout;
     QPushButton *Button_exportPath;
     QHBoxLayout *horizontalLayout_3;
@@ -55,9 +55,18 @@ public:
     {
         if (Qt_yolo_1Class->objectName().isEmpty())
             Qt_yolo_1Class->setObjectName("Qt_yolo_1Class");
-        Qt_yolo_1Class->resize(559, 400);
+        Qt_yolo_1Class->resize(800, 600);
+        QSizePolicy sizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(Qt_yolo_1Class->sizePolicy().hasHeightForWidth());
+        Qt_yolo_1Class->setSizePolicy(sizePolicy);
+        Qt_yolo_1Class->setToolButtonStyle(Qt::ToolButtonStyle::ToolButtonIconOnly);
+        Qt_yolo_1Class->setDocumentMode(false);
         centralWidget = new QWidget(Qt_yolo_1Class);
         centralWidget->setObjectName("centralWidget");
+        sizePolicy.setHeightForWidth(centralWidget->sizePolicy().hasHeightForWidth());
+        centralWidget->setSizePolicy(sizePolicy);
         horizontalLayout_2 = new QHBoxLayout(centralWidget);
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
@@ -65,12 +74,12 @@ public:
         layout_media = new QVBoxLayout();
         layout_media->setSpacing(6);
         layout_media->setObjectName("layout_media");
-        labelpicture = new QLabel(centralWidget);
-        labelpicture->setObjectName("labelpicture");
-        labelpicture->setAutoFillBackground(false);
-        labelpicture->setStyleSheet(QString::fromUtf8("background-color: rgb(170, 170, 127);"));
+        label_media_info = new QLabel(centralWidget);
+        label_media_info->setObjectName("label_media_info");
+        label_media_info->setAutoFillBackground(false);
+        label_media_info->setStyleSheet(QString::fromUtf8("background-color: rgb(170, 170, 127);"));
 
-        layout_media->addWidget(labelpicture);
+        layout_media->addWidget(label_media_info);
 
 
         horizontalLayout_2->addLayout(layout_media);
@@ -166,7 +175,7 @@ public:
         Qt_yolo_1Class->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(Qt_yolo_1Class);
         menuBar->setObjectName("menuBar");
-        menuBar->setGeometry(QRect(0, 0, 559, 20));
+        menuBar->setGeometry(QRect(0, 0, 800, 20));
         Qt_yolo_1Class->setMenuBar(menuBar);
         mainToolBar = new QToolBar(Qt_yolo_1Class);
         mainToolBar->setObjectName("mainToolBar");
@@ -182,8 +191,8 @@ public:
 
     void retranslateUi(QMainWindow *Qt_yolo_1Class)
     {
-        Qt_yolo_1Class->setWindowTitle(QCoreApplication::translate("Qt_yolo_1Class", "Qt_yolo_1", nullptr));
-        labelpicture->setText(QString());
+        Qt_yolo_1Class->setWindowTitle(QCoreApplication::translate("Qt_yolo_1Class", "smokeing detect", nullptr));
+        label_media_info->setText(QString());
         Button_exportPath->setText(QCoreApplication::translate("Qt_yolo_1Class", "\350\250\255\345\256\232\350\274\270\345\207\272\350\267\257\345\276\221", nullptr));
         Button_Detection->setText(QCoreApplication::translate("Qt_yolo_1Class", "\345\225\237\347\224\250\345\201\265\346\270\254", nullptr));
         Button_Detection_stop->setText(QCoreApplication::translate("Qt_yolo_1Class", "\345\201\234\346\255\242", nullptr));

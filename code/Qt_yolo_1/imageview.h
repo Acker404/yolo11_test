@@ -6,7 +6,6 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsVideoItem>
 #include <QMediaPlayer>
-#include <QVideoSink>
 #include <QPixmap>
 #include <QImage>
 
