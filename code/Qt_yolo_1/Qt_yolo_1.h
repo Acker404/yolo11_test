@@ -5,6 +5,7 @@
 #include "ui_Qt_yolo_1.h"
 #include "inference.h"
 #include "imageview.h"
+#include <opencv2/videoio.hpp>
 
 class Qt_yolo_1 : public QMainWindow
 {
@@ -28,4 +29,5 @@ private:
     QString currentVideoPath_;
     bool isDetectionRunning_ = false;
     QTimer* videoTimer_ = nullptr;
+    cv::VideoCapture* cap_ = nullptr;
 };

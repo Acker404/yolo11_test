@@ -56,7 +56,6 @@ public:
         if (Qt_yolo_1Class->objectName().isEmpty())
             Qt_yolo_1Class->setObjectName("Qt_yolo_1Class");
         Qt_yolo_1Class->resize(559, 400);
-        Qt_yolo_1Class->setMaximumSize(QSize(600, 400));
         centralWidget = new QWidget(Qt_yolo_1Class);
         centralWidget->setObjectName("centralWidget");
         horizontalLayout_2 = new QHBoxLayout(centralWidget);

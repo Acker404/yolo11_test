@@ -25,7 +25,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     QObject::connect(ui.Button_openImage, &QPushButton::clicked, this, [=]() {
         QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Images (*.png *.jpg *.bmp)"));
         if (!fileName.isEmpty()) {
-            currentImage_ = cv::imread(fileName.toStdString());
+            currentImage_ = cv::imread(fileName.toLocal8Bit().constData());
             view->loadImage(currentImage_);
             currentVideoPath_.clear();
         }
@@ -35,6 +35,11 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
         QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Videos (*.mp4 *.avi)"));
         if (!fileName.isEmpty()) {
             currentVideoPath_ = fileName;
+            if (cap_) {
+                cap_->release();
+                delete cap_;
+            }
+            cap_ = new cv::VideoCapture(currentVideoPath_.toLocal8Bit().constData());
             view->loadVideo(currentVideoPath_);
             currentImage_.release();
         }
@@ -89,9 +94,8 @@ void Qt_yolo_1::stopDetection()
 
 void Qt_yolo_1::processVideoFrame()
 {
-    static cv::VideoCapture cap(currentVideoPath_.toStdString());
     cv::Mat frame;
-    if (cap.read(frame)) {
+    if (cap_ && cap_->read(frame)) {
         std::vector<Detection> output = pIntf_->runInference(frame);
         int detections = output.size();
 
