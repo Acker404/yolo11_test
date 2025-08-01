@@ -51,7 +51,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout_tool">
       <item>
        <widget class="QPushButton" name="Button_exportPath">
         <property name="text">
@@ -60,30 +60,73 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QVBoxLayout" name="verticalLayout_detect" stretch="0,0">
         <property name="spacing">
-         <number>6</number>
+         <number>8</number>
+        </property>
+        <property name="sizeConstraint">
+         <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
         </property>
         <item>
-         <widget class="QPushButton" name="Button_Detection">
-          <property name="text">
-           <string>啟用偵測</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_detect_fram_set">
+          <item>
+           <widget class="QLabel" name="label_detect_fram_info">
+            <property name="text">
+             <string>frame_set</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox_detect_frame_set">
+            <property name="inputMethodHints">
+             <set>Qt::InputMethodHint::ImhDigitsOnly</set>
+            </property>
+            <property name="minimum">
+             <number>5</number>
+            </property>
+            <property name="maximum">
+             <number>120</number>
+            </property>
+            <property name="singleStep">
+             <number>5</number>
+            </property>
+            <property name="value">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="Button_Detection_stop">
-          <property name="text">
-           <string>停止</string>
+         <layout class="QHBoxLayout" name="horizontalLayout_detect_button">
+          <property name="spacing">
+           <number>6</number>
           </property>
-         </widget>
+          <item>
+           <widget class="QPushButton" name="Button_Detection">
+            <property name="text">
+             <string>啟用偵測</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="Button_Detection_stop">
+            <property name="text">
+             <string>停止</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="verticalLayout_out">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <layout class="QHBoxLayout" name="horizontalLayout_out_select">
           <item>
            <widget class="QCheckBox" name="checkBox_2">
             <property name="text">
@@ -113,7 +156,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="verticalLayout_open">
         <property name="sizeConstraint">
          <enum>QLayout::SizeConstraint::SetDefaultConstraint</enum>
         </property>
@@ -125,29 +168,36 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <layout class="QVBoxLayout" name="verticalLayout_open_local_file">
           <item>
-           <widget class="QPushButton" name="Button_openImage">
-            <property name="text">
-             <string>選擇圖片</string>
+           <layout class="QHBoxLayout" name="horizontalLayout_open_local_single">
+            <property name="sizeConstraint">
+             <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
             </property>
-           </widget>
+            <item>
+             <widget class="QPushButton" name="Button_openImage">
+              <property name="text">
+               <string>選擇圖片</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="Button_openVideo">
+              <property name="text">
+               <string>選擇影片</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
-           <widget class="QPushButton" name="Button_openVideo">
+           <widget class="QPushButton" name="Button_openFolder">
             <property name="text">
-             <string>選擇影片</string>
+             <string>開啟資料夾</string>
             </property>
            </widget>
           </item>
          </layout>
-        </item>
-        <item>
-         <widget class="QPushButton" name="Button_openFolder">
-          <property name="text">
-           <string>開啟資料夾</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>

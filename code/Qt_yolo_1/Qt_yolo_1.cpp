@@ -46,7 +46,9 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
                 delete cap_;
             }
             cap_ = new cv::VideoCapture(currentVideoPath_.toLocal8Bit().constData());
-            view->loadVideo(currentVideoPath_);
+            cv::Mat frame;
+            cap_->read(frame);
+            view->loadImage(frame);
             currentImage_.release();
 
             QFileInfo info(fileName);
@@ -81,7 +83,7 @@ void Qt_yolo_1::startDetection()
         std::vector<Detection> output = pIntf_->runInference(currentImage_);
         int detections = output.size();
         std::cout << "Number of detections:" << detections << std::endl;
-        isDetectionRunning_ = true;
+
         for (int i = 0; i < detections; ++i)
         {
             Detection detection = output[i];
@@ -94,7 +96,10 @@ void Qt_yolo_1::startDetection()
         view->loadImage(currentImage_);
     } else if (!currentVideoPath_.isEmpty()) {
         isDetectionRunning_ = true;
-        videoTimer_->start(33); // ~30 FPS
+        if (cap_) {
+            cap_->set(cv::CAP_PROP_POS_FRAMES, 0);
+        }
+        videoTimer_->start(1000 / ui.spinBox_detect_frame_set->value());
     }
     updateMediaInfoLabel();
 }
@@ -114,19 +119,22 @@ void Qt_yolo_1::processVideoFrame()
 {
     cv::Mat frame;
     if (cap_ && cap_->read(frame)) {
-        std::vector<Detection> output = pIntf_->runInference(frame);
-        int detections = output.size();
+        frameCounter_++;
+        if (frameCounter_ % ui.spinBox_detect_frame_set->value() == 0) {
+            std::vector<Detection> output = pIntf_->runInference(frame);
+            int detections = output.size();
 
-        for (int i = 0; i < detections; ++i)
-        {
-            Detection detection = output[i];
-            cv::Rect box = detection.box;
-            cv::Scalar color = detection.color;
-            cv::rectangle(frame, box, color, 2);
-            std::string classString = detection.className + " " + std::to_string(detection.confidence).substr(0, 4);
-            cv::putText(frame, classString, cv::Point(box.x, box.y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
+            for (int i = 0; i < detections; ++i)
+            {
+                Detection detection = output[i];
+                cv::Rect box = detection.box;
+                cv::Scalar color = detection.color;
+                cv::rectangle(frame, box, color, 2);
+                std::string classString = detection.className + " " + std::to_string(detection.confidence).substr(0, 4);
+                cv::putText(frame, classString, cv::Point(box.x, box.y - 5), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 0), 2);
+            }
+            view->loadImage(frame);
         }
-        view->loadImage(frame);
     } else {
         stopDetection();
     }

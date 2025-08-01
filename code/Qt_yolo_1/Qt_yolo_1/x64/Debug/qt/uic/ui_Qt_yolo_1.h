@@ -17,6 +17,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QVBoxLayout>
@@ -31,19 +32,24 @@ public:
     QHBoxLayout *horizontalLayout_2;
     QVBoxLayout *layout_media;
     QLabel *label_media_info;
-    QVBoxLayout *verticalLayout;
+    QVBoxLayout *verticalLayout_tool;
     QPushButton *Button_exportPath;
-    QHBoxLayout *horizontalLayout_3;
+    QVBoxLayout *verticalLayout_detect;
+    QHBoxLayout *horizontalLayout_detect_fram_set;
+    QLabel *label_detect_fram_info;
+    QSpinBox *spinBox_detect_frame_set;
+    QHBoxLayout *horizontalLayout_detect_button;
     QPushButton *Button_Detection;
     QPushButton *Button_Detection_stop;
-    QVBoxLayout *verticalLayout_3;
-    QHBoxLayout *horizontalLayout_4;
+    QVBoxLayout *verticalLayout_out;
+    QHBoxLayout *horizontalLayout_out_select;
     QCheckBox *checkBox_2;
     QCheckBox *checkBox;
     QPushButton *Button_export;
-    QVBoxLayout *verticalLayout_2;
+    QVBoxLayout *verticalLayout_open;
     QPushButton *Button_stream;
-    QHBoxLayout *horizontalLayout_5;
+    QVBoxLayout *verticalLayout_open_local_file;
+    QHBoxLayout *horizontalLayout_open_local_single;
     QPushButton *Button_openImage;
     QPushButton *Button_openVideo;
     QPushButton *Button_openFolder;
@@ -84,93 +90,129 @@ public:
 
         horizontalLayout_2->addLayout(layout_media);
 
-        verticalLayout = new QVBoxLayout();
-        verticalLayout->setSpacing(6);
-        verticalLayout->setObjectName("verticalLayout");
+        verticalLayout_tool = new QVBoxLayout();
+        verticalLayout_tool->setSpacing(6);
+        verticalLayout_tool->setObjectName("verticalLayout_tool");
         Button_exportPath = new QPushButton(centralWidget);
         Button_exportPath->setObjectName("Button_exportPath");
 
-        verticalLayout->addWidget(Button_exportPath);
+        verticalLayout_tool->addWidget(Button_exportPath);
 
-        horizontalLayout_3 = new QHBoxLayout();
-        horizontalLayout_3->setSpacing(6);
-        horizontalLayout_3->setObjectName("horizontalLayout_3");
+        verticalLayout_detect = new QVBoxLayout();
+        verticalLayout_detect->setSpacing(8);
+        verticalLayout_detect->setObjectName("verticalLayout_detect");
+        verticalLayout_detect->setSizeConstraint(QLayout::SizeConstraint::SetMaximumSize);
+        horizontalLayout_detect_fram_set = new QHBoxLayout();
+        horizontalLayout_detect_fram_set->setSpacing(6);
+        horizontalLayout_detect_fram_set->setObjectName("horizontalLayout_detect_fram_set");
+        label_detect_fram_info = new QLabel(centralWidget);
+        label_detect_fram_info->setObjectName("label_detect_fram_info");
+        label_detect_fram_info->setAlignment(Qt::AlignmentFlag::AlignCenter);
+
+        horizontalLayout_detect_fram_set->addWidget(label_detect_fram_info);
+
+        spinBox_detect_frame_set = new QSpinBox(centralWidget);
+        spinBox_detect_frame_set->setObjectName("spinBox_detect_frame_set");
+        spinBox_detect_frame_set->setInputMethodHints(Qt::InputMethodHint::ImhDigitsOnly);
+        spinBox_detect_frame_set->setMinimum(5);
+        spinBox_detect_frame_set->setMaximum(120);
+        spinBox_detect_frame_set->setSingleStep(5);
+        spinBox_detect_frame_set->setValue(5);
+
+        horizontalLayout_detect_fram_set->addWidget(spinBox_detect_frame_set);
+
+
+        verticalLayout_detect->addLayout(horizontalLayout_detect_fram_set);
+
+        horizontalLayout_detect_button = new QHBoxLayout();
+        horizontalLayout_detect_button->setSpacing(6);
+        horizontalLayout_detect_button->setObjectName("horizontalLayout_detect_button");
         Button_Detection = new QPushButton(centralWidget);
         Button_Detection->setObjectName("Button_Detection");
 
-        horizontalLayout_3->addWidget(Button_Detection);
+        horizontalLayout_detect_button->addWidget(Button_Detection);
 
         Button_Detection_stop = new QPushButton(centralWidget);
         Button_Detection_stop->setObjectName("Button_Detection_stop");
 
-        horizontalLayout_3->addWidget(Button_Detection_stop);
+        horizontalLayout_detect_button->addWidget(Button_Detection_stop);
 
 
-        verticalLayout->addLayout(horizontalLayout_3);
+        verticalLayout_detect->addLayout(horizontalLayout_detect_button);
 
-        verticalLayout_3 = new QVBoxLayout();
-        verticalLayout_3->setSpacing(6);
-        verticalLayout_3->setObjectName("verticalLayout_3");
-        horizontalLayout_4 = new QHBoxLayout();
-        horizontalLayout_4->setSpacing(6);
-        horizontalLayout_4->setObjectName("horizontalLayout_4");
+
+        verticalLayout_tool->addLayout(verticalLayout_detect);
+
+        verticalLayout_out = new QVBoxLayout();
+        verticalLayout_out->setSpacing(6);
+        verticalLayout_out->setObjectName("verticalLayout_out");
+        horizontalLayout_out_select = new QHBoxLayout();
+        horizontalLayout_out_select->setSpacing(6);
+        horizontalLayout_out_select->setObjectName("horizontalLayout_out_select");
         checkBox_2 = new QCheckBox(centralWidget);
         checkBox_2->setObjectName("checkBox_2");
         checkBox_2->setChecked(true);
 
-        horizontalLayout_4->addWidget(checkBox_2);
+        horizontalLayout_out_select->addWidget(checkBox_2);
 
         checkBox = new QCheckBox(centralWidget);
         checkBox->setObjectName("checkBox");
 
-        horizontalLayout_4->addWidget(checkBox);
+        horizontalLayout_out_select->addWidget(checkBox);
 
 
-        verticalLayout_3->addLayout(horizontalLayout_4);
+        verticalLayout_out->addLayout(horizontalLayout_out_select);
 
         Button_export = new QPushButton(centralWidget);
         Button_export->setObjectName("Button_export");
 
-        verticalLayout_3->addWidget(Button_export);
+        verticalLayout_out->addWidget(Button_export);
 
 
-        verticalLayout->addLayout(verticalLayout_3);
+        verticalLayout_tool->addLayout(verticalLayout_out);
 
-        verticalLayout_2 = new QVBoxLayout();
-        verticalLayout_2->setSpacing(6);
-        verticalLayout_2->setObjectName("verticalLayout_2");
-        verticalLayout_2->setSizeConstraint(QLayout::SizeConstraint::SetDefaultConstraint);
+        verticalLayout_open = new QVBoxLayout();
+        verticalLayout_open->setSpacing(6);
+        verticalLayout_open->setObjectName("verticalLayout_open");
+        verticalLayout_open->setSizeConstraint(QLayout::SizeConstraint::SetDefaultConstraint);
         Button_stream = new QPushButton(centralWidget);
         Button_stream->setObjectName("Button_stream");
 
-        verticalLayout_2->addWidget(Button_stream);
+        verticalLayout_open->addWidget(Button_stream);
 
-        horizontalLayout_5 = new QHBoxLayout();
-        horizontalLayout_5->setSpacing(6);
-        horizontalLayout_5->setObjectName("horizontalLayout_5");
+        verticalLayout_open_local_file = new QVBoxLayout();
+        verticalLayout_open_local_file->setSpacing(6);
+        verticalLayout_open_local_file->setObjectName("verticalLayout_open_local_file");
+        horizontalLayout_open_local_single = new QHBoxLayout();
+        horizontalLayout_open_local_single->setSpacing(6);
+        horizontalLayout_open_local_single->setObjectName("horizontalLayout_open_local_single");
+        horizontalLayout_open_local_single->setSizeConstraint(QLayout::SizeConstraint::SetMinimumSize);
         Button_openImage = new QPushButton(centralWidget);
         Button_openImage->setObjectName("Button_openImage");
 
-        horizontalLayout_5->addWidget(Button_openImage);
+        horizontalLayout_open_local_single->addWidget(Button_openImage);
 
         Button_openVideo = new QPushButton(centralWidget);
         Button_openVideo->setObjectName("Button_openVideo");
 
-        horizontalLayout_5->addWidget(Button_openVideo);
+        horizontalLayout_open_local_single->addWidget(Button_openVideo);
 
 
-        verticalLayout_2->addLayout(horizontalLayout_5);
+        verticalLayout_open_local_file->addLayout(horizontalLayout_open_local_single);
 
         Button_openFolder = new QPushButton(centralWidget);
         Button_openFolder->setObjectName("Button_openFolder");
 
-        verticalLayout_2->addWidget(Button_openFolder);
+        verticalLayout_open_local_file->addWidget(Button_openFolder);
 
 
-        verticalLayout->addLayout(verticalLayout_2);
+        verticalLayout_open->addLayout(verticalLayout_open_local_file);
 
 
-        horizontalLayout_2->addLayout(verticalLayout);
+        verticalLayout_tool->addLayout(verticalLayout_open);
+
+
+        horizontalLayout_2->addLayout(verticalLayout_tool);
 
         Qt_yolo_1Class->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(Qt_yolo_1Class);
@@ -194,6 +236,7 @@ public:
         Qt_yolo_1Class->setWindowTitle(QCoreApplication::translate("Qt_yolo_1Class", "smokeing detect", nullptr));
         label_media_info->setText(QString());
         Button_exportPath->setText(QCoreApplication::translate("Qt_yolo_1Class", "\350\250\255\345\256\232\350\274\270\345\207\272\350\267\257\345\276\221", nullptr));
+        label_detect_fram_info->setText(QCoreApplication::translate("Qt_yolo_1Class", "frame_set", nullptr));
         Button_Detection->setText(QCoreApplication::translate("Qt_yolo_1Class", "\345\225\237\347\224\250\345\201\265\346\270\254", nullptr));
         Button_Detection_stop->setText(QCoreApplication::translate("Qt_yolo_1Class", "\345\201\234\346\255\242", nullptr));
         checkBox_2->setText(QCoreApplication::translate("Qt_yolo_1Class", "\346\250\231\346\241\206", nullptr));

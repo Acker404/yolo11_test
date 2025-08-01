@@ -33,4 +33,5 @@ private:
     bool isDetectionRunning_ = false;
     QTimer* videoTimer_ = nullptr;
     cv::VideoCapture* cap_ = nullptr;
+    int frameCounter_ = 0;
 };
