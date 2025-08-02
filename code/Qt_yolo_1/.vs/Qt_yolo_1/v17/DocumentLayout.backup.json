@@ -38,21 +38,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 3,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "imageview.h",
-              "DocumentMoniker": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\imageview.h",
-              "RelativeDocumentMoniker": "imageview.h",
-              "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\imageview.h",
-              "RelativeToolTip": "imageview.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAACAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-07-31T20:27:06.608Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 6,
@@ -63,8 +50,7 @@
               "RelativeToolTip": "inference.h",
               "ViewState": "AgIAABUAAAAAAAAAAAAAACwAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-07-25T18:43:41.579Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-25T18:43:41.579Z"
             },
             {
               "$type": "Document",
@@ -76,8 +62,7 @@
               "RelativeToolTip": "main.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-07-25T17:59:27.677Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-25T17:59:27.677Z"
             },
             {
               "$type": "Document",
@@ -89,8 +74,7 @@
               "RelativeToolTip": "Qt_yolo_1.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-06-23T06:49:52.244Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-23T06:49:52.244Z"
             },
             {
               "$type": "Document",
@@ -98,12 +82,24 @@
               "Title": "Qt_yolo_1.cpp",
               "DocumentMoniker": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp",
               "RelativeDocumentMoniker": "Qt_yolo_1.cpp",
-              "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp*",
-              "RelativeToolTip": "Qt_yolo_1.cpp*",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAqwBUAAAAWAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\Qt_yolo_1.cpp",
+              "RelativeToolTip": "Qt_yolo_1.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-06-23T03:43:29.215Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "imageview.h",
+              "DocumentMoniker": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\imageview.h",
+              "RelativeDocumentMoniker": "imageview.h",
+              "ToolTip": "C:\\Users\\mark9\\Desktop\\yolo11_test\\code\\Qt_yolo_1\\imageview.h",
+              "RelativeToolTip": "imageview.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-31T20:27:06.608Z"
             },
             {
               "$type": "Document",
@@ -115,8 +111,7 @@
               "RelativeToolTip": "imageview.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-08-01T04:59:47.135Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-01T04:59:47.135Z"
             },
             {
               "$type": "Document",
@@ -128,8 +123,7 @@
               "RelativeToolTip": "inference.cpp",
               "ViewState": "AgIAAK4AAAAAAAAAAAAAABMAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-07-25T01:09:05.9Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-25T01:09:05.9Z"
             }
           ]
         }

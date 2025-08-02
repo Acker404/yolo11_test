@@ -1,6 +1,9 @@
 #include "Qt_yolo_1.h"
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QInputDialog>
+#include <QCameraDevice>  
+#include <QMediaDevices>
 
 // Helper function to draw detections with auto-sizing and positioning
 void drawDetection(cv::Mat& frame, const Detection& detection)
@@ -15,40 +18,39 @@ void drawDetection(cv::Mat& frame, const Detection& detection)
     std::string label = detection.className + " " + std::to_string(detection.confidence).substr(0, 4);
 
     // --- Use a fixed font size (pt) ---
-   // double fontScale = 0.7; // This value can be tuned to look like 20pt
-    int targetHeight = 20;
-    double fontScale = 0.1;
-    int baseline = 0;
-    cv::Size textSize;
-    while (true) {
-        cv::Size textSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, fontScale, 1, &baseline);
-        if (textSize.height >= targetHeight)
-            break;
-        fontScale += 0.1;
-    }
+    double fontScale = 0.7;
 
-    //int baseline = 0;
-    //cv::Size textSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, fontScale, thickness, &baseline);
+    int baseline = 0;
+    cv::Size textSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, fontScale, thickness, &baseline);
 
     // --- Intelligent positioning for the label ---
-    cv::Point labelOrigin = cv::Point(detection.box.x, detection.box.y - 10);
-    if (labelOrigin.y - textSize.height < 0) {
-        labelOrigin.y = detection.box.y + textSize.height + 5;
+    // 1. Default position: Above the box
+    int y_baseline = detection.box.y - 10;
+    
+    // Check if the label background goes off the top of the image
+    if (y_baseline - textSize.height - baseline < 0) {
+        // 2. If so, try placing it below the box
+        y_baseline = detection.box.y + detection.box.height + textSize.height + 5;
+
+        // Check if this new position goes off the bottom
+        if (y_baseline + baseline > frame.rows) {
+            // 3. If it *still* goes off-screen, place it inside the top of the box
+            y_baseline = detection.box.y + textSize.height + 5;
+        }
     }
 
-    cv::Rect labelBackground(labelOrigin.x, labelOrigin.y - textSize.height - baseline, textSize.width, textSize.height + baseline + 5);
-    // Constrain the background to stay within the image
+    // Now define the background rectangle using the final baseline 'y'
+    cv::Rect labelBackground(detection.box.x, y_baseline - textSize.height - baseline, textSize.width, textSize.height + baseline + 5);
+
+    // Constrain the background to stay within the image horizontally
     if (labelBackground.x < 0) labelBackground.x = 0;
-    if (labelBackground.y < 0) labelBackground.y = 0;
     if (labelBackground.x + labelBackground.width > frame.cols) {
         labelBackground.x = frame.cols - labelBackground.width;
     }
-    if (labelBackground.y + labelBackground.height > frame.rows) {
-        labelBackground.y = frame.rows - labelBackground.height;
-    }
     
+    // Draw the background and the text
     cv::rectangle(frame, labelBackground, detection.color, cv::FILLED);
-    cv::putText(frame, label, cv::Point(labelBackground.x, labelBackground.y + textSize.height), cv::FONT_HERSHEY_SIMPLEX, fontScale, cv::Scalar(0, 0, 0), thickness);
+    cv::putText(frame, label, cv::Point(labelBackground.x, y_baseline), cv::FONT_HERSHEY_SIMPLEX, fontScale, cv::Scalar(0, 0, 0), thickness);
 }
 
 cv::Mat QimageToMat(const QImage& image)
@@ -78,6 +80,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
             currentImage_ = cv::imread(fileName.toLocal8Bit().constData());
             view->loadImage(currentImage_);
             currentVideoPath_.clear();
+            currentCameraIndex_ = -1;
 
             QFileInfo info(fileName);
             currentMediaInfo_ = QString("圖片: %1, 副檔名: %2, 解析度: %3x%4, 檔案大小: %5 KB")
@@ -90,6 +93,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
         QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Videos (*.mp4 *.avi)"));
         if (!fileName.isEmpty()) {
             currentVideoPath_ = fileName;
+            currentCameraIndex_ = -1;
             if (cap_) {
                 cap_->release();
                 delete cap_;
@@ -110,6 +114,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
 
     QObject::connect(ui.Button_Detection, &QPushButton::clicked, this, &Qt_yolo_1::startDetection);
     QObject::connect(ui.Button_Detection_stop, &QPushButton::clicked, this, &Qt_yolo_1::stopDetection);
+    QObject::connect(ui.Button_stream, &QPushButton::clicked, this, &Qt_yolo_1::openCameraStream);
 }
 
 Qt_yolo_1::~Qt_yolo_1()
@@ -134,9 +139,9 @@ void Qt_yolo_1::startDetection()
             drawDetection(currentImage_, detection);
         }
         view->loadImage(currentImage_);
-    } else if (!currentVideoPath_.isEmpty()) {
+    } else if (!currentVideoPath_.isEmpty() || currentCameraIndex_ != -1) {
         isDetectionRunning_ = true;
-        if (cap_) {
+        if (cap_ && !currentVideoPath_.isEmpty()) {
             cap_->set(cv::CAP_PROP_POS_FRAMES, 0);
         }
         videoTimer_->start(1000 / ui.spinBox_detect_frame_set->value());
@@ -176,4 +181,38 @@ void Qt_yolo_1::updateMediaInfoLabel()
 {
     QString statusText = isDetectionRunning_ ? "偵測中" : "未偵測";
     ui.label_media_info->setText(currentMediaInfo_ + "\n" + statusText);
+}
+
+void Qt_yolo_1::openCameraStream()
+{
+    const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
+    QStringList cameraDescriptions;
+    for (const QCameraDevice &cameraDevice : cameras) {
+        cameraDescriptions << cameraDevice.description();
+    }
+
+    bool ok;
+    QString item = QInputDialog::getItem(this, tr("Select Camera"),
+                                         tr("Camera:"), cameraDescriptions, 0, false, &ok);
+    if (ok && !item.isEmpty()) {
+        int selectedCameraIndex = cameraDescriptions.indexOf(item);
+        if (selectedCameraIndex != -1) {
+            currentCameraIndex_ = selectedCameraIndex;
+            currentVideoPath_.clear();
+            currentImage_.release();
+
+            if (cap_) {
+                cap_->release();
+                delete cap_;
+            }
+            cap_ = new cv::VideoCapture(currentCameraIndex_);
+            cv::Mat frame;
+            cap_->read(frame);
+            view->loadImage(frame);
+
+            currentMediaInfo_ = QString("相機: %1, 解析度: %2x%3")
+                               .arg(item).arg(frame.cols).arg(frame.rows);
+            updateMediaInfoLabel();
+        }
+    }
 }

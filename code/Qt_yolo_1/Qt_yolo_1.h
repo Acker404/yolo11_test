@@ -19,6 +19,7 @@ private slots:
     void startDetection();
     void stopDetection();
     void processVideoFrame();
+    void openCameraStream();
 
 private:
     void updateMediaInfoLabel();
@@ -29,6 +30,7 @@ private:
 
     cv::Mat currentImage_;
     QString currentVideoPath_;
+    int currentCameraIndex_ = -1;
     QString currentMediaInfo_;
     bool isDetectionRunning_ = false;
     QTimer* videoTimer_ = nullptr;

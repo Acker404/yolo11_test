@@ -1,7 +1,47 @@
 ﻿   Qt/MSBuild: 3.4.0.1
+  Reading Qt configuration (C:/Qt/6.9.1/msvc2022_64/bin/qmake)
    Qt: 6.9.1
+  uic Qt_yolo_1.ui
+  rcc Qt_yolo_1.qrc
+  moc Qt_yolo_1.h
+  moc imageview.h
+   RCC: Warning: No resources in 'C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\Qt_yolo_1.qrc'.
+  imageview.cpp
+  inference.cpp
   Qt_yolo_1.cpp
+  main.cpp
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
+  (編譯來源檔案 'inference.cpp')
+  
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(63,47): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(70,54): warning C4244: '引數': 將 'double' 轉換為 '_Ty'，由於類型不同，可能導致資料遺失
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(70,54): warning C4244:         with
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(70,54): warning C4244:         [
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(70,54): warning C4244:             _Ty=float
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(70,54): warning C4244:         ]
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(95,47): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(187,22): warning C4244: '正在初始化': 將 '_Tp' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(187,22): warning C4244:         with
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(187,22): warning C4244:         [
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(187,22): warning C4244:             _Tp=float
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(187,22): warning C4244:         ]
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(188,23): warning C4244: '正在初始化': 將 '_Tp' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(188,23): warning C4244:         with
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(188,23): warning C4244:         [
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(188,23): warning C4244:             _Tp=float
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(188,23): warning C4244:         ]
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(191,19): warning C4244: '正在初始化': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.cpp(192,19): warning C4244: '正在初始化': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
+  (編譯來源檔案 'main.cpp')
+  
 C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
   (編譯來源檔案 'Qt_yolo_1.cpp')
+  
+  qrc_Qt_yolo_1.cpp
+  moc_Qt_yolo_1.cpp
+  moc_imageview.cpp
+C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\inference.h(46,37): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
+  (編譯來源檔案 'Qt_yolo_1/x64/Debug/qt/moc/moc_Qt_yolo_1.cpp')
   
   Qt_yolo_1.vcxproj -> C:\Users\mark9\Desktop\yolo11_test\code\Qt_yolo_1\x64\Debug\Qt_yolo_1.exe

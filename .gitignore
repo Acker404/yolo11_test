@@ -17,6 +17,8 @@ build-*/
 debug/
 release/
 x64/
+Debug/
+v17/
 
 # C++ 編譯產物
 *.obj

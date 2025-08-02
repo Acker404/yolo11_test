@@ -39,6 +39,7 @@
     <QtInstall>QtDesignStudio-4.1.1-lts_qt6_design_studio_reduced_version</QtInstall>
     <QtModules>core;gui;widgets;multimedia;multimediawidgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
+    <QtPlugin>true</QtPlugin>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>QtDesignStudio-4.1.1-lts_qt6_design_studio_reduced_version</QtInstall>
