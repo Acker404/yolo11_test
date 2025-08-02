@@ -1,3 +1,13 @@
+# Visual Studio artifacts
+*.ipch
+*.db
+*.VC.db
+
+# PyTorch DLLs
+*.dll
+*.lib
+*.pyd
+
 # Visual Studio / VS Code
 .vs/
 *.suo
