@@ -1,23 +1,21 @@
-# Visual Studio artifacts
+# === Visual Studio artifacts ===
+.vs/
 *.ipch
 *.db
 *.VC.db
-
-# PyTorch DLLs
-*.dll
-*.lib
-*.pyd
-
-# Visual Studio / VS Code
-.vs/
+*.VC.VC.opendb
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
-*.VC.db
-*.VC.VC.opendb
 
-# Qt Creator
+# === VS Intermediate folders (你專案中有這些大檔) ===
+**/v17/
+**/AutoPCH/
+**/CopilotIndices/
+**/Browse.VC.db
+
+# === Qt Creator ===
 *.pro.user
 *.qmake.stash
 *.autosave
@@ -28,9 +26,8 @@ debug/
 release/
 x64/
 Debug/
-v17/
 
-# C++ 編譯產物
+# === Compiled C++ / Qt ===
 *.obj
 *.o
 *.gch
@@ -46,15 +43,12 @@ v17/
 *.so
 *.a
 *.dylib
-
-# Qt 設計檔與中間檔
 *.moc
 moc_*.cpp
 qrc_*.cpp
 ui_*.h
-*.ipch
 
-# YOLO 模型或 AI 檔案（避免誤上傳數百 MB）
+# === PyTorch / YOLO / AI Models ===
 *.weights
 *.onnx
 *.pt
@@ -62,32 +56,33 @@ ui_*.h
 *.pb
 *.h5
 *.ckpt
+*.pkl
 
-# Python 編譯與快取檔案（如有使用 Python）
-yolo11/
+# === Python Bytecode ===
 __pycache__/
 *.py[cod]
 *.pyo
 *.egg
 *.egg-info/
-*.pkl
 
-# 暫存 / 中間檔 / 快取
+# === Site-packages 你推到了 yolo11/Lib/... ===
+yolo11/Lib/
+yolo11/Lib/site-packages/
+
+# === Caches / Logs / Temp ===
 *.log
 *.tmp
 *.bak
-*.db
 *.swp
 *.DS_Store
 Thumbs.db
 
-# VS Code 設定
+# === VSCode Settings ===
 .vscode/
 
-# Jupyter Notebook
+# === Jupyter Notebook ===
 .ipynb_checkpoints/
 
-# Git LFS 建議（如需使用）
+# === Git LFS Hints (可選) ===
 # git lfs track "*.pt"
 # git lfs track "*.onnx"
-# git lfs track "*.ipch"
