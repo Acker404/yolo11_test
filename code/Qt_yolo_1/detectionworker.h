@@ -25,7 +25,7 @@ signals:
     void finished();
 
 private:
-    void drawDetection(cv::Mat& frame, const Detection& detection);
+    void drawDetection(cv::Mat& frame, const Detection& detection, bool drawMarkbox, bool applyMosaic);
     Inference* pIntf_;
     bool m_stop = false;
 };

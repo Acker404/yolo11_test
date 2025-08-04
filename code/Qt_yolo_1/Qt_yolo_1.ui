@@ -35,6 +35,9 @@
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <layout class="QVBoxLayout" name="layout_media">
+      <property name="spacing">
+       <number>8</number>
+      </property>
       <item>
        <widget class="QLabel" name="label_media_info">
         <property name="autoFillBackground">
@@ -52,6 +55,9 @@
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_tool">
+      <property name="spacing">
+       <number>6</number>
+      </property>
       <item>
        <widget class="QListWidget" name="listWidget_fileList"/>
       </item>
@@ -131,7 +137,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_out_select">
           <item>
-           <widget class="QCheckBox" name="checkBox_2">
+           <widget class="QCheckBox" name="checkBox_markbox">
             <property name="text">
              <string>標框</string>
             </property>
@@ -141,7 +147,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="checkBox_mosaic">
             <property name="text">
              <string>馬賽克</string>
             </property>

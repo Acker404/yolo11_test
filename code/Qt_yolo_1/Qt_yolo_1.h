@@ -34,6 +34,7 @@ private:
     void updateMediaInfoLabel();
     void loadFile(const QString& filePath);
     void setupFileNavigation();
+    void drawDetection(cv::Mat& frame, const Detection& detection, bool drawMarkbox, bool applyMosaic);
 
     Ui::Qt_yolo_1Class ui;
     ImageView* view = nullptr;

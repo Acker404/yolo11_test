@@ -2,58 +2,9 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QInputDialog>
-#include <QCameraDevice>  
+#include <QCameraDevice>
 #include <QMediaDevices>
 #include <QDir>
-
-
-// Helper function to draw detections with auto-sizing and positioning
-void drawDetection(cv::Mat& frame, const Detection& detection)
-{
-    // --- Auto-adjusting thickness based on image size ---
-    int thickness = std::max(1, (int)(frame.cols / 720.0 * 1.5));
-
-    // Draw the bounding box for the detection
-    cv::rectangle(frame, detection.box, detection.color, thickness);
-
-    // Create the label text (class name + confidence)
-    std::string label = detection.className + " " + std::to_string(detection.confidence).substr(0, 4);
-
-    // --- Use a fixed font size (pt) ---
-    double fontScale = 0.7;
-
-    int baseline = 0;
-    cv::Size textSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, fontScale, thickness, &baseline);
-
-    // --- Intelligent positioning for the label ---
-    // 1. Default position: Above the box
-    int y_baseline = detection.box.y - 10;
-    
-    // Check if the label background goes off the top of the image
-    if (y_baseline - textSize.height - baseline < 0) {
-        // 2. If so, try placing it below the box
-        y_baseline = detection.box.y + detection.box.height + textSize.height + 5;
-
-        // Check if this new position goes off the bottom
-        if (y_baseline + baseline > frame.rows) {
-            // 3. If it *still* goes off-screen, place it inside the top of the box
-            y_baseline = detection.box.y + textSize.height + 5;
-        }
-    }
-
-    // Now define the background rectangle using the final baseline 'y'
-    cv::Rect labelBackground(detection.box.x, y_baseline - textSize.height - baseline, textSize.width, textSize.height + baseline + 5);
-
-    // Constrain the background to stay within the image horizontally
-    if (labelBackground.x < 0) labelBackground.x = 0;
-    if (labelBackground.x + labelBackground.width > frame.cols) {
-        labelBackground.x = frame.cols - labelBackground.width;
-    }
-    
-    // Draw the background and the text
-    cv::rectangle(frame, labelBackground, detection.color, cv::FILLED);
-    cv::putText(frame, label, cv::Point(labelBackground.x, y_baseline), cv::FONT_HERSHEY_SIMPLEX, fontScale, cv::Scalar(0, 0, 0), thickness);
-}
 
 cv::Mat QimageToMat(const QImage& image)
 {
@@ -116,6 +67,68 @@ Qt_yolo_1::~Qt_yolo_1()
     }
 }
 
+void Qt_yolo_1::drawDetection(cv::Mat& frame, const Detection& detection, bool drawMarkbox, bool applyMosaic)
+{
+    if (applyMosaic) {
+        cv::Rect box = detection.box;
+        if (box.x < 0) box.x = 0;
+        if (box.y < 0) box.y = 0;
+        if (box.x + box.width > frame.cols) box.width = frame.cols - box.x;
+        if (box.y + box.height > frame.rows) box.height = frame.rows - box.y;
+
+        cv::Mat roi = frame(box);
+        cv::Mat small_roi;
+        cv::resize(roi, small_roi, cv::Size(10, 10), 0, 0, cv::INTER_NEAREST);
+        cv::resize(small_roi, roi, box.size(), 0, 0, cv::INTER_NEAREST);
+    }
+
+    if (drawMarkbox) {
+        // --- Auto-adjusting thickness based on image size ---
+        int thickness = std::max(1, (int)(frame.cols / 720.0 * 1.5));
+
+        // Draw the bounding box for the detection
+        cv::rectangle(frame, detection.box, detection.color, thickness);
+
+        // Create the label text (class name + confidence)
+        std::string label = detection.className + " " + std::to_string(detection.confidence).substr(0, 4);
+
+        // --- Use a fixed font size (pt) ---
+        double fontScale = 0.7;
+
+        int baseline = 0;
+        cv::Size textSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, fontScale, thickness, &baseline);
+
+        // --- Intelligent positioning for the label ---
+        // 1. Default position: Above the box
+        int y_baseline = detection.box.y - 10;
+        
+        // Check if the label background goes off the top of the image
+        if (y_baseline - textSize.height - baseline < 0) {
+            // 2. If so, try placing it below the box
+            y_baseline = detection.box.y + detection.box.height + textSize.height + 5;
+
+            // Check if this new position goes off the bottom
+            if (y_baseline + baseline > frame.rows) {
+                // 3. If it *still* goes off-screen, place it inside the top of the box
+                y_baseline = detection.box.y + textSize.height + 5;
+            }
+        }
+
+        // Now define the background rectangle using the final baseline 'y'
+        cv::Rect labelBackground(detection.box.x, y_baseline - textSize.height - baseline, textSize.width, textSize.height + baseline + 5);
+
+        // Constrain the background to stay within the image horizontally
+        if (labelBackground.x < 0) labelBackground.x = 0;
+        if (labelBackground.x + labelBackground.width > frame.cols) {
+            labelBackground.x = frame.cols - labelBackground.width;
+        }
+        
+        // Draw the background and the text
+        cv::rectangle(frame, labelBackground, detection.color, cv::FILLED);
+        cv::putText(frame, label, cv::Point(labelBackground.x, y_baseline), cv::FONT_HERSHEY_SIMPLEX, fontScale, cv::Scalar(0, 0, 0), thickness);
+    }
+}
+
 void Qt_yolo_1::startDetection()
 {
     if (isDetectionRunning_) {
@@ -125,7 +138,7 @@ void Qt_yolo_1::startDetection()
     if (!currentImage_.empty()) {
         std::vector<Detection> output = pIntf_->runInference(currentImage_);
         for (const auto& detection : output) {
-            drawDetection(currentImage_, detection);
+            drawDetection(currentImage_, detection, ui.checkBox_markbox->isChecked(), ui.checkBox_mosaic->isChecked());
         }
         view->loadImage(currentImage_);
     } else if (!currentVideoPath_.isEmpty() || currentCameraIndex_ != -1) {
@@ -157,7 +170,7 @@ void Qt_yolo_1::processVideoFrame()
         if (frameCounter_ % ui.spinBox_detect_frame_set->value() == 0) {
             std::vector<Detection> output = pIntf_->runInference(frame);
             for (const auto& detection : output) {
-                drawDetection(frame, detection);
+                drawDetection(frame, detection, ui.checkBox_markbox->isChecked(), ui.checkBox_mosaic->isChecked());
             }
             view->loadImage(frame);
         }
@@ -230,7 +243,7 @@ void Qt_yolo_1::openFolder()
     }
 }
 
-    void Qt_yolo_1::nextFile()
+void Qt_yolo_1::nextFile()
 {
     if (currentFileIndex_ != -1 && currentFileIndex_ < fileList_.size() - 1) {
         currentFileIndex_++;
