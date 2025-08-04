@@ -4,6 +4,8 @@
 #include <QInputDialog>
 #include <QCameraDevice>  
 #include <QMediaDevices>
+#include <QDir>
+
 
 // Helper function to draw detections with auto-sizing and positioning
 void drawDetection(cv::Mat& frame, const Detection& detection)
@@ -77,44 +79,31 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     QObject::connect(ui.Button_openImage, &QPushButton::clicked, this, [=]() {
         QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Images (*.png *.jpg *.bmp)"));
         if (!fileName.isEmpty()) {
-            currentImage_ = cv::imread(fileName.toLocal8Bit().constData());
-            view->loadImage(currentImage_);
-            currentVideoPath_.clear();
-            currentCameraIndex_ = -1;
-
-            QFileInfo info(fileName);
-            currentMediaInfo_ = QString("圖片: %1, 副檔名: %2, 解析度: %3x%4, 檔案大小: %5 KB")
-                               .arg(info.fileName()).arg(info.suffix()).arg(currentImage_.cols).arg(currentImage_.rows).arg(info.size() / 1024);
-            updateMediaInfoLabel();
+            loadFile(fileName);
+            prevButton_->hide();
+            nextButton_->hide();
+            ui.listWidget_fileList->clear();
         }
     });
 
     QObject::connect(ui.Button_openVideo, &QPushButton::clicked, this, [=]() {
         QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Videos (*.mp4 *.avi)"));
         if (!fileName.isEmpty()) {
-            currentVideoPath_ = fileName;
-            currentCameraIndex_ = -1;
-            if (cap_) {
-                cap_->release();
-                delete cap_;
-            }
-            cap_ = new cv::VideoCapture(currentVideoPath_.toLocal8Bit().constData());
-            cv::Mat frame;
-            cap_->read(frame);
-            view->loadImage(frame);
-            currentImage_.release();
-
-            QFileInfo info(fileName);
-            double fps = cap_->get(cv::CAP_PROP_FPS);
-            currentMediaInfo_ = QString("影片: %1, 副檔名: %2, 解析度: %3x%4, FPS: %5")
-                               .arg(info.fileName()).arg(info.suffix()).arg((int)cap_->get(cv::CAP_PROP_FRAME_WIDTH)).arg((int)cap_->get(cv::CAP_PROP_FRAME_HEIGHT)).arg(fps);
-            updateMediaInfoLabel();
+            loadFile(fileName);
+            prevButton_->hide();
+            nextButton_->hide();
+            ui.listWidget_fileList->clear();
         }
     });
 
     QObject::connect(ui.Button_Detection, &QPushButton::clicked, this, &Qt_yolo_1::startDetection);
     QObject::connect(ui.Button_Detection_stop, &QPushButton::clicked, this, &Qt_yolo_1::stopDetection);
     QObject::connect(ui.Button_stream, &QPushButton::clicked, this, &Qt_yolo_1::openCameraStream);
+    QObject::connect(ui.Button_openFolder, &QPushButton::clicked, this, &Qt_yolo_1::openFolder);
+    connect(ui.listWidget_fileList, &QListWidget::itemClicked, this, &Qt_yolo_1::onFileListItemClicked);
+
+
+    setupFileNavigation();
 }
 
 Qt_yolo_1::~Qt_yolo_1()
@@ -213,6 +202,99 @@ void Qt_yolo_1::openCameraStream()
             currentMediaInfo_ = QString("相機: %1, 解析度: %2x%3")
                                .arg(item).arg(frame.cols).arg(frame.rows);
             updateMediaInfoLabel();
+            prevButton_->hide();
+            nextButton_->hide();
+            ui.listWidget_fileList->clear();
         }
     }
+}
+
+void Qt_yolo_1::openFolder()
+{
+    QString dirPath = QFileDialog::getExistingDirectory(this, tr("Open Directory"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if (!dirPath.isEmpty()) {
+        currentFolderPath_ = dirPath;
+        QDir dir(dirPath);
+        QStringList filters;
+        filters << "*.png" << "*.jpg" << "*.bmp" << "*.mp4" << "*.avi";
+        fileList_ = dir.entryList(filters, QDir::Files);
+        ui.listWidget_fileList->clear();
+        ui.listWidget_fileList->addItems(fileList_);
+
+        if (!fileList_.isEmpty()) {
+            currentFileIndex_ = 0;
+            loadFile(dir.filePath(fileList_.at(currentFileIndex_)));
+            prevButton_->show();
+            nextButton_->show();
+        }
+    }
+}
+
+    void Qt_yolo_1::nextFile()
+{
+    if (currentFileIndex_ != -1 && currentFileIndex_ < fileList_.size() - 1) {
+        currentFileIndex_++;
+        loadFile(QDir(currentFolderPath_).filePath(fileList_.at(currentFileIndex_)));
+    }
+}
+
+void Qt_yolo_1::previousFile()
+{
+    if (currentFileIndex_ > 0) {
+        currentFileIndex_--;
+        loadFile(QDir(currentFolderPath_).filePath(fileList_.at(currentFileIndex_)));
+    }
+}
+
+void Qt_yolo_1::loadFile(const QString& filePath)
+{
+    QFileInfo fileInfo(filePath);
+    QString extension = fileInfo.suffix().toLower();
+    if (extension == "png" || extension == "jpg" || extension == "bmp") {
+        currentImage_ = cv::imread(filePath.toLocal8Bit().constData());
+        view->loadImage(currentImage_);
+        currentVideoPath_.clear();
+        currentCameraIndex_ = -1;
+        currentMediaInfo_ = QString("圖片: %1, 副檔名: %2, 解析度: %3x%4, 檔案大小: %5 KB")
+                           .arg(fileInfo.fileName()).arg(fileInfo.suffix()).arg(currentImage_.cols).arg(currentImage_.rows).arg(fileInfo.size() / 1024);
+    } else if (extension == "mp4" || extension == "avi") {
+        currentVideoPath_ = filePath;
+        currentCameraIndex_ = -1;
+        if (cap_) {
+            cap_->release();
+            delete cap_;
+        }
+        cap_ = new cv::VideoCapture(currentVideoPath_.toLocal8Bit().constData());
+        cv::Mat frame;
+        cap_->read(frame);
+        view->loadImage(frame);
+        currentImage_.release();
+        double fps = cap_->get(cv::CAP_PROP_FPS);
+        currentMediaInfo_ = QString("影片: %1, 副檔名: %2, 解析度: %3x%4, FPS: %5")
+                           .arg(fileInfo.fileName()).arg(fileInfo.suffix()).arg((int)cap_->get(cv::CAP_PROP_FRAME_WIDTH)).arg((int)cap_->get(cv::CAP_PROP_FRAME_HEIGHT)).arg(fps);
+    }
+    updateMediaInfoLabel();
+}
+
+void Qt_yolo_1::setupFileNavigation()
+{
+    prevButton_ = new QPushButton("Previous", this);
+    nextButton_ = new QPushButton("Next", this);
+
+    QHBoxLayout* layout = new QHBoxLayout();
+    layout->addWidget(prevButton_);
+    layout->addWidget(nextButton_);
+
+    ui.layout_media->addLayout(layout);
+
+    connect(prevButton_, &QPushButton::clicked, this, &Qt_yolo_1::previousFile);
+    connect(nextButton_, &QPushButton::clicked, this, &Qt_yolo_1::nextFile);
+
+    prevButton_->hide();
+    nextButton_->hide();
+}
+void Qt_yolo_1::onFileListItemClicked(QListWidgetItem* item)
+{
+    loadFile(QDir(currentFolderPath_).filePath(item->text()));
+    currentFileIndex_ = fileList_.indexOf(item->text());
 }

@@ -53,6 +53,9 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_tool">
       <item>
+       <widget class="QListWidget" name="listWidget_fileList"/>
+      </item>
+      <item>
        <widget class="QPushButton" name="Button_exportPath">
         <property name="text">
          <string>設定輸出路徑</string>

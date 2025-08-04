@@ -2,10 +2,15 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QTimer>
+#include <QPushButton>
+#include <QStringList>
+#include <QListWidget>
 #include "ui_Qt_yolo_1.h"
 #include "inference.h"
 #include "imageview.h"
 #include <opencv2/videoio.hpp>
+#include <fstream>
+
 
 class Qt_yolo_1 : public QMainWindow
 {
@@ -20,9 +25,15 @@ private slots:
     void stopDetection();
     void processVideoFrame();
     void openCameraStream();
+    void openFolder();
+    void nextFile();
+    void previousFile();
+    void onFileListItemClicked(QListWidgetItem* item);
 
 private:
     void updateMediaInfoLabel();
+    void loadFile(const QString& filePath);
+    void setupFileNavigation();
 
     Ui::Qt_yolo_1Class ui;
     ImageView* view = nullptr;
@@ -36,4 +47,11 @@ private:
     QTimer* videoTimer_ = nullptr;
     cv::VideoCapture* cap_ = nullptr;
     int frameCounter_ = 0;
+
+    // Folder navigation
+    QString currentFolderPath_;
+    QStringList fileList_;
+    int currentFileIndex_ = -1;
+    QPushButton* prevButton_ = nullptr;
+    QPushButton* nextButton_ = nullptr;
 };
