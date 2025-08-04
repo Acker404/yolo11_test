@@ -29,6 +29,8 @@ private slots:
     void nextFile();
     void previousFile();
     void onFileListItemClicked(QListWidgetItem* item);
+    void onDetectionSettingsChanged();
+    //void updateDetections();
 
 private:
     void updateMediaInfoLabel();
@@ -41,6 +43,8 @@ private:
     Inference* pIntf_ {nullptr};
 
     cv::Mat currentImage_;
+    cv::Mat originalImage_;
+    //std::vector<Detection> lastDetections_;
     QString currentVideoPath_;
     int currentCameraIndex_ = -1;
     QString currentMediaInfo_;

@@ -52,6 +52,8 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     QObject::connect(ui.Button_stream, &QPushButton::clicked, this, &Qt_yolo_1::openCameraStream);
     QObject::connect(ui.Button_openFolder, &QPushButton::clicked, this, &Qt_yolo_1::openFolder);
     connect(ui.listWidget_fileList, &QListWidget::itemClicked, this, &Qt_yolo_1::onFileListItemClicked);
+    connect(ui.checkBox_markbox, &QCheckBox::checkStateChanged, this, &Qt_yolo_1::onDetectionSettingsChanged);
+    connect(ui.checkBox_mosaic, &QCheckBox::checkStateChanged, this, &Qt_yolo_1::onDetectionSettingsChanged);
 
 
     setupFileNavigation();
@@ -135,7 +137,8 @@ void Qt_yolo_1::startDetection()
         return;
     }
 
-    if (!currentImage_.empty()) {
+    if (!originalImage_.empty()) {
+        currentImage_ = originalImage_.clone();
         std::vector<Detection> output = pIntf_->runInference(currentImage_);
         for (const auto& detection : output) {
             drawDetection(currentImage_, detection, ui.checkBox_markbox->isChecked(), ui.checkBox_mosaic->isChecked());
@@ -202,6 +205,7 @@ void Qt_yolo_1::openCameraStream()
             currentCameraIndex_ = selectedCameraIndex;
             currentVideoPath_.clear();
             currentImage_.release();
+            originalImage_.release();
 
             if (cap_) {
                 cap_->release();
@@ -264,7 +268,8 @@ void Qt_yolo_1::loadFile(const QString& filePath)
     QFileInfo fileInfo(filePath);
     QString extension = fileInfo.suffix().toLower();
     if (extension == "png" || extension == "jpg" || extension == "bmp") {
-        currentImage_ = cv::imread(filePath.toLocal8Bit().constData());
+        originalImage_ = cv::imread(filePath.toLocal8Bit().constData());
+        currentImage_ = originalImage_.clone();
         view->loadImage(currentImage_);
         currentVideoPath_.clear();
         currentCameraIndex_ = -1;
@@ -273,6 +278,7 @@ void Qt_yolo_1::loadFile(const QString& filePath)
     } else if (extension == "mp4" || extension == "avi") {
         currentVideoPath_ = filePath;
         currentCameraIndex_ = -1;
+        originalImage_.release();
         if (cap_) {
             cap_->release();
             delete cap_;
@@ -310,4 +316,12 @@ void Qt_yolo_1::onFileListItemClicked(QListWidgetItem* item)
 {
     loadFile(QDir(currentFolderPath_).filePath(item->text()));
     currentFileIndex_ = fileList_.indexOf(item->text());
+}
+
+void Qt_yolo_1::onDetectionSettingsChanged()
+{
+    if (!originalImage_.empty())
+    {
+        startDetection();
+    }
 }
