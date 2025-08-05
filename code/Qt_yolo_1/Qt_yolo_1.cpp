@@ -149,7 +149,8 @@ void Qt_yolo_1::startDetection()
         if (cap_ && !currentVideoPath_.isEmpty()) {
             cap_->set(cv::CAP_PROP_POS_FRAMES, 0);
         }
-        videoTimer_->start(1000 / ui.spinBox_detect_frame_set->value());
+        //videoTimer_->start(1000 / ui.spinBox_detect_frame_set->value());
+        videoTimer_->start(30);
     }
     updateMediaInfoLabel();
 }
