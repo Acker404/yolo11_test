@@ -63,8 +63,18 @@
       </item>
       <item>
        <widget class="QPushButton" name="Button_exportPath">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="text">
-         <string>設定輸出路徑</string>
+         <string>輸出路徑</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="Button_exportSet">
+        <property name="text">
+         <string>輸出設定</string>
         </property>
        </widget>
       </item>

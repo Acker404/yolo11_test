@@ -5,12 +5,64 @@
 #include <QCameraDevice>
 #include <QMediaDevices>
 #include <QDir>
+#include <QMessageBox>
+#include <QSettings>
 
 cv::Mat QimageToMat(const QImage& image)
 {
     QImage convertedImage = image.convertToFormat(QImage::Format_RGB888);
     return cv::Mat(convertedImage.height(), convertedImage.width(), CV_8UC3, (void*)convertedImage.bits(), convertedImage.bytesPerLine()).clone();
 }
+struct OutputOptions {
+    bool saveLabel;
+    bool saveImage;
+    bool saveCSV;
+};
+
+OutputOptions getOutputOptionsDialog(QWidget* parent = nullptr) {
+    QSettings settings("YourCompany", "YourApp");
+
+    QDialog dialog(parent);
+    dialog.setWindowTitle("輸出選項");
+
+    QVBoxLayout* layoutMain = new QVBoxLayout(&dialog);
+    QHBoxLayout* layout = new QHBoxLayout;
+
+    QCheckBox* out_labeling = new QCheckBox("標籤");
+    QCheckBox* out_image = new QCheckBox("圖片");
+    QCheckBox* out_csv = new QCheckBox("CSV");
+
+    // 讀取之前的設定
+    out_labeling->setChecked(settings.value("output/label", true).toBool());
+    out_image->setChecked(settings.value("output/image", true).toBool());
+    out_csv->setChecked(settings.value("output/csv", false).toBool());
+
+    layout->addWidget(out_labeling);
+    layout->addWidget(out_image);
+    layout->addWidget(out_csv);
+    layoutMain->addLayout(layout);
+
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    QObject::connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    QObject::connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    layoutMain->addWidget(buttonBox);
+
+    OutputOptions opt = { false, false, false };
+    if (dialog.exec() == QDialog::Accepted) {
+        opt.saveLabel = out_labeling->isChecked();
+        opt.saveImage = out_image->isChecked();
+        opt.saveCSV = out_csv->isChecked();
+
+        // 儲存設定
+        settings.setValue("output/label", opt.saveLabel);
+        settings.setValue("output/image", opt.saveImage);
+        settings.setValue("output/csv", opt.saveCSV);
+    }
+
+    return opt;
+}
+
+
 
 Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     : QMainWindow(parent)
@@ -54,8 +106,10 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     connect(ui.listWidget_fileList, &QListWidget::itemClicked, this, &Qt_yolo_1::onFileListItemClicked);
     connect(ui.checkBox_markbox, &QCheckBox::checkStateChanged, this, &Qt_yolo_1::onDetectionSettingsChanged);
     connect(ui.checkBox_mosaic, &QCheckBox::checkStateChanged, this, &Qt_yolo_1::onDetectionSettingsChanged);
-
-
+    QObject::connect(ui.Button_exportPath, &QPushButton::clicked, this, &Qt_yolo_1::handleExportPathClick);
+    QObject::connect(ui.Button_export, &QPushButton::clicked, this, &Qt_yolo_1::handleExportClick);
+    QObject::connect(ui.Button_exportSet, &QPushButton::clicked, this, &Qt_yolo_1::handleExportset);
+    
     setupFileNavigation();
 }
 
@@ -325,4 +379,94 @@ void Qt_yolo_1::onDetectionSettingsChanged()
     {
         startDetection();
     }
+}
+
+void Qt_yolo_1::handleExportPathClick()
+{
+    exportPath = QFileDialog::getExistingDirectory(this, tr("Select Export Folder"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
+    /*if (!exportPath.isEmpty()) {
+        ui.lineEdit_exportPath->setText(exportPath);
+    }*/
+}
+/*int getIntFromDialog(QWidget* parent = nullptr) {
+    QDialog dialog(parent);
+    dialog.setWindowTitle("輸入選項");
+
+    QVBoxLayout* layoutMain = new QVBoxLayout(&dialog);
+    QHBoxLayout* layout = new QHBoxLayout ;
+    //QHBoxLayout* layout = new QHBoxLayout(&dialog);
+
+
+   // QLabel* label_image = new QLabel("請輸入一個整數：");
+   // QCheckBox* out_labeling = new QCheckBox;
+    //QLabel* label = new QLabel("請輸入一個整數：");
+    QCheckBox* out_labeling = new QCheckBox;
+	out_labeling->setText("標籤");
+    QCheckBox* out_image = new QCheckBox;
+    out_image->setText("圖片");
+    QCheckBox* out_csv = new QCheckBox;
+    out_csv->setText("CSV");
+    //QSpinBox* spinBox = new QSpinBox;
+    //spinBox->setRange(1, 100);
+    //spinBox->setValue(10);
+
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    QObject::connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    QObject::connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    //layout->addWidget(label);
+    //layout->addWidget(spinBox);
+    layoutMain->addLayout(layout);
+    layout->addWidget(out_labeling);
+    layout->addWidget(out_image);
+    layout->addWidget(out_csv);
+    layoutMain->addWidget(buttonBox);
+
+    int value = -1;
+    if (dialog.exec() == QDialog::Accepted) {
+        //value = spinBox->value();
+        value = out_labeling->isEnabled();
+    }
+    return value;
+}*/
+void Qt_yolo_1::handleExportClick()
+{
+    if (exportPath.isEmpty()) {
+        QMessageBox::warning(this, tr("Export Error"), tr("Please select an export path first."));
+        return;
+    }
+    if (currentImage_.empty()) {
+        QMessageBox::warning(this, tr("Export Error"), tr("No image to export."));
+        return;
+    }
+    //getIntFromDialog();
+    // bool ok;
+     //int i = QInputDialog::intValueSelected("1");
+     //if (ok)
+         //QMessageBox::information(this, tr("ok"), tr("Image exported successfully to %1"));
+         //integerLabel->setText(tr("%1%").arg(i));
+     /*QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"), exportPath + "/exported_image.png", tr("Images (*.png *.jpg *.bmp)"));
+     if (!fileName.isEmpty()) {
+         cv::imwrite(fileName.toStdString(), currentImage_);
+         QMessageBox::information(this, tr("Export Success"), tr("Image exported successfully to %1").arg(fileName));
+     }*/
+}
+void Qt_yolo_1::handleExportset()
+{
+    //getOutputOptionsDialog();
+    static OutputOptions opt ;
+    opt = getOutputOptionsDialog(this);
+    qDebug() << "標籤:" << opt.saveLabel;
+    qDebug() << "圖片:" << opt.saveImage;
+    qDebug() << "CSV:" << opt.saveCSV;
+    // bool ok;
+     //int i = QInputDialog::intValueSelected("1");
+     //if (ok)
+         //QMessageBox::information(this, tr("ok"), tr("Image exported successfully to %1"));
+         //integerLabel->setText(tr("%1%").arg(i));
+     /*QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"), exportPath + "/exported_image.png", tr("Images (*.png *.jpg *.bmp)"));
+     if (!fileName.isEmpty()) {
+         cv::imwrite(fileName.toStdString(), currentImage_);
+         QMessageBox::information(this, tr("Export Success"), tr("Image exported successfully to %1").arg(fileName));
+     }*/
 }

@@ -30,7 +30,9 @@ private slots:
     void previousFile();
     void onFileListItemClicked(QListWidgetItem* item);
     void onDetectionSettingsChanged();
-    //void updateDetections();
+    void handleExportPathClick();
+    void handleExportClick();
+    void handleExportset();
 
 private:
     void updateMediaInfoLabel();
@@ -44,8 +46,10 @@ private:
 
     cv::Mat currentImage_;
     cv::Mat originalImage_;
+
     //std::vector<Detection> lastDetections_;
     QString currentVideoPath_;
+    QString exportPath;
     int currentCameraIndex_ = -1;
     QString currentMediaInfo_;
     bool isDetectionRunning_ = false;
