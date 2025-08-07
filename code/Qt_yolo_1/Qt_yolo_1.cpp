@@ -65,7 +65,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
 
     videoTimer_ = new QTimer(this);
     connect(videoTimer_, &QTimer::timeout, this, &Qt_yolo_1::processVideoFrame);
-
+    ui.progressBar_batch->setVisible(false);
     QObject::connect(ui.Button_openImage, &QPushButton::clicked, this, [=]() {
         QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Images (*.png *.jpg *.bmp)"));
         if (!fileName.isEmpty()) {
@@ -365,35 +365,12 @@ void Qt_yolo_1::handleExportClick()
         QMessageBox::warning(this, tr("Export Error"), tr("Please select an export path first."));
         return;
     }
-    // Check if we have a single image or a folder loaded
-    bool isSingleImageMode = !originalImage_.empty();
+
     bool isBatchMode = !currentFolderPath_.isEmpty();
+    bool isSingleImageMode = !originalImage_.empty();
 
-    if (!isSingleImageMode && !isBatchMode) {
-        QMessageBox::warning(this, tr("Export Error"), tr("No image or image folder loaded to export."));
-        return;
-    }
-
-    // Step 3: Behavior for Single Image
-    if (isSingleImageMode) {
-        QFileInfo fileInfo(fileList_.isEmpty() ? "single_image" : fileList_.at(currentFileIndex_));
-        QString baseName = fileInfo.baseName();
-
-        // Run inference to get the latest detections
-        std::vector<Detection> detections = pIntf_->runInference(originalImage_);
-
-        if (exportOptions_.saveImage) {
-            QString savePath = exportPath + "/" + baseName + "_detected.png";
-            saveProcessedImage(savePath, originalImage_, detections, ui.checkBox_mosaic->isChecked(), ui.checkBox_markbox->isChecked());
-        }
-        if (exportOptions_.saveLabel) {
-            QString savePath = exportPath + "/" + baseName + ".txt";
-            saveYoloLabels(savePath, detections, originalImage_.cols, originalImage_.rows);
-        }
-        QMessageBox::information(this, tr("Export Success"), tr("Single image exported successfully."));
-    }
     // Step 4: Behavior for Multiple Images (Batch Mode)
-    else if (isBatchMode) {
+    if (isBatchMode) {
         QDir exportDir(exportPath);
         QString imageExportPath = exportPath + "/images";
         QString labelExportPath = exportPath + "/labels";
@@ -414,10 +391,21 @@ void Qt_yolo_1::handleExportClick()
             }
         }
 
+        int totalFiles = fileList_.size();
+        ui.progressBar_batch->setMinimum(0);
+        ui.progressBar_batch->setMaximum(totalFiles);
+        ui.progressBar_batch->setValue(0);
+        ui.progressBar_batch->setVisible(true);
+
+        int index = 0;
         for (const QString& fileName : fileList_) {
             QString fullPath = QDir(currentFolderPath_).filePath(fileName);
-            cv::Mat image = cv::imread(fullPath.toStdString());
-            if (image.empty()) continue;
+            cv::Mat image = cv::imread(fullPath.toLocal8Bit().constData());
+            if (image.empty()) {
+                index++;
+                ui.progressBar_batch->setValue(index);
+                continue;
+            }
 
             std::vector<Detection> detections = pIntf_->runInference(image);
             QFileInfo fileInfo(fileName);
@@ -432,14 +420,42 @@ void Qt_yolo_1::handleExportClick()
                 saveYoloLabels(savePath, detections, image.cols, image.rows);
             }
             if (exportOptions_.saveCSV && csvFile.isOpen()) {
-                 appendCSVRow(csvStream, fileName, detections);
+                appendCSVRow(csvStream, fileName, detections);
             }
+
+            index++;
+            ui.progressBar_batch->setValue(index);
         }
 
         if (csvFile.isOpen()) {
             csvFile.close();
         }
+
+        ui.progressBar_batch->setValue(totalFiles);
+        ui.progressBar_batch->setVisible(false);
         QMessageBox::information(this, tr("Export Success"), tr("Batch export completed successfully."));
+    }
+
+    // Step 3: Behavior for Single Image
+    else if (isSingleImageMode) {
+        QFileInfo fileInfo(fileList_.isEmpty() ? "single_image" : fileList_.at(currentFileIndex_));
+        QString baseName = fileInfo.baseName();
+
+        // Run inference to get the latest detections
+        std::vector<Detection> detections = pIntf_->runInference(originalImage_);
+
+        if (exportOptions_.saveImage) {
+            QString savePath = exportPath + "/" + baseName + "_detected.png";
+            saveProcessedImage(savePath, originalImage_, detections, ui.checkBox_mosaic->isChecked(), ui.checkBox_markbox->isChecked());
+        }
+        if (exportOptions_.saveLabel) {
+            QString savePath = exportPath + "/" + baseName + ".txt";
+            saveYoloLabels(savePath, detections, originalImage_.cols, originalImage_.rows);
+        }
+        QMessageBox::information(this, tr("Export Success"), tr("Single image exported successfully."));
+    }
+    else {
+        QMessageBox::warning(this, tr("Export Error"), tr("No image or image folder loaded to export."));
     }
 }
 
@@ -450,7 +466,7 @@ void Qt_yolo_1::saveProcessedImage(const QString& path, const cv::Mat& image, co
     for (const auto& detection : detections) {
         drawDetection(processedImage, detection, markbox, mosaic);
     }
-    cv::imwrite(path.toStdString(), processedImage);
+    cv::imwrite(path.toLocal8Bit().constData(), processedImage);
 }
 
 void Qt_yolo_1::saveYoloLabels(const QString& path, const std::vector<Detection>& detections, int imgWidth, int imgHeight) {
@@ -475,5 +491,5 @@ void Qt_yolo_1::appendCSVRow(QTextStream& stream, const QString& fileName, const
     for (const auto& det : detections) {
         labelList << QString::fromStdString(det.className);
     }
-    stream << fileName << "," << (detected ? "true" : "false") << ","" << labelList.join(", ") << ""\n";
+    stream << fileName << "," << (detected ? "true" : "false") << "," << labelList.join(", ") << "\n";
 }
