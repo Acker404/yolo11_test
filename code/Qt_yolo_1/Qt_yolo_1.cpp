@@ -7,20 +7,12 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QSettings>
+#include <QTextStream>
 
-cv::Mat QimageToMat(const QImage& image)
-{
-    QImage convertedImage = image.convertToFormat(QImage::Format_RGB888);
-    return cv::Mat(convertedImage.height(), convertedImage.width(), CV_8UC3, (void*)convertedImage.bits(), convertedImage.bytesPerLine()).clone();
-}
-struct OutputOptions {
-    bool saveLabel;
-    bool saveImage;
-    bool saveCSV;
-};
-
-OutputOptions getOutputOptionsDialog(QWidget* parent = nullptr) {
+// Helper function to show the export options dialog
+OutputOptions getOutputOptionsDialog(QWidget* parent, const OutputOptions& currentOpt) {
     QSettings settings("YourCompany", "YourApp");
+    OutputOptions opt = currentOpt;
 
     QDialog dialog(parent);
     dialog.setWindowTitle("輸出選項");
@@ -28,14 +20,13 @@ OutputOptions getOutputOptionsDialog(QWidget* parent = nullptr) {
     QVBoxLayout* layoutMain = new QVBoxLayout(&dialog);
     QHBoxLayout* layout = new QHBoxLayout;
 
-    QCheckBox* out_labeling = new QCheckBox("標籤");
-    QCheckBox* out_image = new QCheckBox("圖片");
-    QCheckBox* out_csv = new QCheckBox("CSV");
+    QCheckBox* out_labeling = new QCheckBox("標籤 (.txt)");
+    QCheckBox* out_image = new QCheckBox("圖片 (with boxes)");
+    QCheckBox* out_csv = new QCheckBox("CSV (for folders)");
 
-    // 讀取之前的設定
-    out_labeling->setChecked(settings.value("output/label", true).toBool());
-    out_image->setChecked(settings.value("output/image", true).toBool());
-    out_csv->setChecked(settings.value("output/csv", false).toBool());
+    out_labeling->setChecked(settings.value("output/label", opt.saveLabel).toBool());
+    out_image->setChecked(settings.value("output/image", opt.saveImage).toBool());
+    out_csv->setChecked(settings.value("output/csv", opt.saveCSV).toBool());
 
     layout->addWidget(out_labeling);
     layout->addWidget(out_image);
@@ -47,30 +38,26 @@ OutputOptions getOutputOptionsDialog(QWidget* parent = nullptr) {
     QObject::connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     layoutMain->addWidget(buttonBox);
 
-    OutputOptions opt = { false, false, false };
     if (dialog.exec() == QDialog::Accepted) {
         opt.saveLabel = out_labeling->isChecked();
         opt.saveImage = out_image->isChecked();
         opt.saveCSV = out_csv->isChecked();
 
-        // 儲存設定
         settings.setValue("output/label", opt.saveLabel);
         settings.setValue("output/image", opt.saveImage);
         settings.setValue("output/csv", opt.saveCSV);
     }
-
     return opt;
 }
-
 
 
 Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-    bool runOnGPU = false; // Set to false if you want to run on CPU
-    std::string modelPath = "C:/Users/mark9/Desktop/yolo11_test/model/best.onnx"; // Path to your ONNX model
-    std::string classesPath = "C:/Users/mark9/Desktop/yolo11_test/classes.txt"; // Path to your classes file
+    bool runOnGPU = false; 
+    std::string modelPath = "C:/Users/mark9/Desktop/yolo11_test/model/best.onnx";
+    std::string classesPath = "C:/Users/mark9/Desktop/yolo11_test/classes.txt";
     pIntf_ = new Inference(modelPath, cv::Size(960, 960), classesPath, runOnGPU);
 
     view = new ImageView(this);
@@ -86,6 +73,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
             prevButton_->hide();
             nextButton_->hide();
             ui.listWidget_fileList->clear();
+            currentFolderPath_.clear(); // Ensure folder mode is off
         }
     });
 
@@ -96,6 +84,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
             prevButton_->hide();
             nextButton_->hide();
             ui.listWidget_fileList->clear();
+            currentFolderPath_.clear();
         }
     });
 
@@ -132,54 +121,33 @@ void Qt_yolo_1::drawDetection(cv::Mat& frame, const Detection& detection, bool d
         if (box.x + box.width > frame.cols) box.width = frame.cols - box.x;
         if (box.y + box.height > frame.rows) box.height = frame.rows - box.y;
 
-        cv::Mat roi = frame(box);
-        cv::Mat small_roi;
-        cv::resize(roi, small_roi, cv::Size(10, 10), 0, 0, cv::INTER_NEAREST);
-        cv::resize(small_roi, roi, box.size(), 0, 0, cv::INTER_NEAREST);
+        if (box.width > 0 && box.height > 0) {
+            cv::Mat roi = frame(box);
+            cv::Mat small_roi;
+            cv::resize(roi, small_roi, cv::Size(10, 10), 0, 0, cv::INTER_NEAREST);
+            cv::resize(small_roi, roi, box.size(), 0, 0, cv::INTER_NEAREST);
+        }
     }
 
     if (drawMarkbox) {
-        // --- Auto-adjusting thickness based on image size ---
         int thickness = std::max(1, (int)(frame.cols / 720.0 * 1.5));
-
-        // Draw the bounding box for the detection
         cv::rectangle(frame, detection.box, detection.color, thickness);
-
-        // Create the label text (class name + confidence)
         std::string label = detection.className + " " + std::to_string(detection.confidence).substr(0, 4);
-
-        // --- Use a fixed font size (pt) ---
         double fontScale = 0.7;
-
         int baseline = 0;
         cv::Size textSize = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, fontScale, thickness, &baseline);
-
-        // --- Intelligent positioning for the label ---
-        // 1. Default position: Above the box
         int y_baseline = detection.box.y - 10;
-        
-        // Check if the label background goes off the top of the image
         if (y_baseline - textSize.height - baseline < 0) {
-            // 2. If so, try placing it below the box
             y_baseline = detection.box.y + detection.box.height + textSize.height + 5;
-
-            // Check if this new position goes off the bottom
             if (y_baseline + baseline > frame.rows) {
-                // 3. If it *still* goes off-screen, place it inside the top of the box
                 y_baseline = detection.box.y + textSize.height + 5;
             }
         }
-
-        // Now define the background rectangle using the final baseline 'y'
         cv::Rect labelBackground(detection.box.x, y_baseline - textSize.height - baseline, textSize.width, textSize.height + baseline + 5);
-
-        // Constrain the background to stay within the image horizontally
         if (labelBackground.x < 0) labelBackground.x = 0;
         if (labelBackground.x + labelBackground.width > frame.cols) {
             labelBackground.x = frame.cols - labelBackground.width;
         }
-        
-        // Draw the background and the text
         cv::rectangle(frame, labelBackground, detection.color, cv::FILLED);
         cv::putText(frame, label, cv::Point(labelBackground.x, y_baseline), cv::FONT_HERSHEY_SIMPLEX, fontScale, cv::Scalar(0, 0, 0), thickness);
     }
@@ -203,7 +171,6 @@ void Qt_yolo_1::startDetection()
         if (cap_ && !currentVideoPath_.isEmpty()) {
             cap_->set(cv::CAP_PROP_POS_FRAMES, 0);
         }
-        //videoTimer_->start(1000 / ui.spinBox_detect_frame_set->value());
         videoTimer_->start(30);
     }
     updateMediaInfoLabel();
@@ -214,7 +181,6 @@ void Qt_yolo_1::stopDetection()
     if (!isDetectionRunning_) {
         return;
     }
-
     isDetectionRunning_ = false;
     videoTimer_->stop();
     updateMediaInfoLabel();
@@ -261,6 +227,7 @@ void Qt_yolo_1::openCameraStream()
             currentVideoPath_.clear();
             currentImage_.release();
             originalImage_.release();
+            currentFolderPath_.clear();
 
             if (cap_) {
                 cap_->release();
@@ -288,7 +255,7 @@ void Qt_yolo_1::openFolder()
         currentFolderPath_ = dirPath;
         QDir dir(dirPath);
         QStringList filters;
-        filters << "*.png" << "*.jpg" << "*.bmp" << "*.mp4" << "*.avi";
+        filters << "*.png" << "*.jpg" << "*.bmp";
         fileList_ = dir.entryList(filters, QDir::Files);
         ui.listWidget_fileList->clear();
         ui.listWidget_fileList->addItems(fileList_);
@@ -383,90 +350,130 @@ void Qt_yolo_1::onDetectionSettingsChanged()
 
 void Qt_yolo_1::handleExportPathClick()
 {
-    exportPath = QFileDialog::getExistingDirectory(this, tr("Select Export Folder"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
-    /*if (!exportPath.isEmpty()) {
-        ui.lineEdit_exportPath->setText(exportPath);
-    }*/
+    exportPath = QFileDialog::getExistingDirectory(this, tr("Select Export Folder"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 }
-/*int getIntFromDialog(QWidget* parent = nullptr) {
-    QDialog dialog(parent);
-    dialog.setWindowTitle("輸入選項");
 
-    QVBoxLayout* layoutMain = new QVBoxLayout(&dialog);
-    QHBoxLayout* layout = new QHBoxLayout ;
-    //QHBoxLayout* layout = new QHBoxLayout(&dialog);
+void Qt_yolo_1::handleExportset()
+{
+    exportOptions_ = getOutputOptionsDialog(this, exportOptions_);
+}
 
-
-   // QLabel* label_image = new QLabel("請輸入一個整數：");
-   // QCheckBox* out_labeling = new QCheckBox;
-    //QLabel* label = new QLabel("請輸入一個整數：");
-    QCheckBox* out_labeling = new QCheckBox;
-	out_labeling->setText("標籤");
-    QCheckBox* out_image = new QCheckBox;
-    out_image->setText("圖片");
-    QCheckBox* out_csv = new QCheckBox;
-    out_csv->setText("CSV");
-    //QSpinBox* spinBox = new QSpinBox;
-    //spinBox->setRange(1, 100);
-    //spinBox->setValue(10);
-
-    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-    QObject::connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-    QObject::connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
-    //layout->addWidget(label);
-    //layout->addWidget(spinBox);
-    layoutMain->addLayout(layout);
-    layout->addWidget(out_labeling);
-    layout->addWidget(out_image);
-    layout->addWidget(out_csv);
-    layoutMain->addWidget(buttonBox);
-
-    int value = -1;
-    if (dialog.exec() == QDialog::Accepted) {
-        //value = spinBox->value();
-        value = out_labeling->isEnabled();
-    }
-    return value;
-}*/
 void Qt_yolo_1::handleExportClick()
 {
+    // Step 1: Basic Validation
     if (exportPath.isEmpty()) {
         QMessageBox::warning(this, tr("Export Error"), tr("Please select an export path first."));
         return;
     }
-    if (currentImage_.empty()) {
-        QMessageBox::warning(this, tr("Export Error"), tr("No image to export."));
+    // Check if we have a single image or a folder loaded
+    bool isSingleImageMode = !originalImage_.empty();
+    bool isBatchMode = !currentFolderPath_.isEmpty();
+
+    if (!isSingleImageMode && !isBatchMode) {
+        QMessageBox::warning(this, tr("Export Error"), tr("No image or image folder loaded to export."));
         return;
     }
-    //getIntFromDialog();
-    // bool ok;
-     //int i = QInputDialog::intValueSelected("1");
-     //if (ok)
-         //QMessageBox::information(this, tr("ok"), tr("Image exported successfully to %1"));
-         //integerLabel->setText(tr("%1%").arg(i));
-     /*QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"), exportPath + "/exported_image.png", tr("Images (*.png *.jpg *.bmp)"));
-     if (!fileName.isEmpty()) {
-         cv::imwrite(fileName.toStdString(), currentImage_);
-         QMessageBox::information(this, tr("Export Success"), tr("Image exported successfully to %1").arg(fileName));
-     }*/
+
+    // Step 3: Behavior for Single Image
+    if (isSingleImageMode) {
+        QFileInfo fileInfo(fileList_.isEmpty() ? "single_image" : fileList_.at(currentFileIndex_));
+        QString baseName = fileInfo.baseName();
+
+        // Run inference to get the latest detections
+        std::vector<Detection> detections = pIntf_->runInference(originalImage_);
+
+        if (exportOptions_.saveImage) {
+            QString savePath = exportPath + "/" + baseName + "_detected.png";
+            saveProcessedImage(savePath, originalImage_, detections, ui.checkBox_mosaic->isChecked(), ui.checkBox_markbox->isChecked());
+        }
+        if (exportOptions_.saveLabel) {
+            QString savePath = exportPath + "/" + baseName + ".txt";
+            saveYoloLabels(savePath, detections, originalImage_.cols, originalImage_.rows);
+        }
+        QMessageBox::information(this, tr("Export Success"), tr("Single image exported successfully."));
+    }
+    // Step 4: Behavior for Multiple Images (Batch Mode)
+    else if (isBatchMode) {
+        QDir exportDir(exportPath);
+        QString imageExportPath = exportPath + "/images";
+        QString labelExportPath = exportPath + "/labels";
+
+        if (exportOptions_.saveImage) exportDir.mkpath(imageExportPath);
+        if (exportOptions_.saveLabel) exportDir.mkpath(labelExportPath);
+
+        QFile csvFile;
+        QTextStream csvStream;
+        if (exportOptions_.saveCSV) {
+            csvFile.setFileName(exportPath + "/summary.csv");
+            if (!csvFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                QMessageBox::warning(this, "CSV Error", "Could not create summary.csv");
+            }
+            else {
+                csvStream.setDevice(&csvFile);
+                csvStream << "filename,detected,labels\n";
+            }
+        }
+
+        for (const QString& fileName : fileList_) {
+            QString fullPath = QDir(currentFolderPath_).filePath(fileName);
+            cv::Mat image = cv::imread(fullPath.toStdString());
+            if (image.empty()) continue;
+
+            std::vector<Detection> detections = pIntf_->runInference(image);
+            QFileInfo fileInfo(fileName);
+            QString baseName = fileInfo.baseName();
+
+            if (exportOptions_.saveImage) {
+                QString savePath = imageExportPath + "/" + baseName + "_detected.png";
+                saveProcessedImage(savePath, image, detections, ui.checkBox_mosaic->isChecked(), ui.checkBox_markbox->isChecked());
+            }
+            if (exportOptions_.saveLabel) {
+                QString savePath = labelExportPath + "/" + baseName + ".txt";
+                saveYoloLabels(savePath, detections, image.cols, image.rows);
+            }
+            if (exportOptions_.saveCSV && csvFile.isOpen()) {
+                 appendCSVRow(csvStream, fileName, detections);
+            }
+        }
+
+        if (csvFile.isOpen()) {
+            csvFile.close();
+        }
+        QMessageBox::information(this, tr("Export Success"), tr("Batch export completed successfully."));
+    }
 }
-void Qt_yolo_1::handleExportset()
-{
-    //getOutputOptionsDialog();
-    static OutputOptions opt ;
-    opt = getOutputOptionsDialog(this);
-    qDebug() << "標籤:" << opt.saveLabel;
-    qDebug() << "圖片:" << opt.saveImage;
-    qDebug() << "CSV:" << opt.saveCSV;
-    // bool ok;
-     //int i = QInputDialog::intValueSelected("1");
-     //if (ok)
-         //QMessageBox::information(this, tr("ok"), tr("Image exported successfully to %1"));
-         //integerLabel->setText(tr("%1%").arg(i));
-     /*QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"), exportPath + "/exported_image.png", tr("Images (*.png *.jpg *.bmp)"));
-     if (!fileName.isEmpty()) {
-         cv::imwrite(fileName.toStdString(), currentImage_);
-         QMessageBox::information(this, tr("Export Success"), tr("Image exported successfully to %1").arg(fileName));
-     }*/
+
+// --- Helper Function Implementations ---
+
+void Qt_yolo_1::saveProcessedImage(const QString& path, const cv::Mat& image, const std::vector<Detection>& detections, bool mosaic, bool markbox) {
+    cv::Mat processedImage = image.clone();
+    for (const auto& detection : detections) {
+        drawDetection(processedImage, detection, markbox, mosaic);
+    }
+    cv::imwrite(path.toStdString(), processedImage);
+}
+
+void Qt_yolo_1::saveYoloLabels(const QString& path, const std::vector<Detection>& detections, int imgWidth, int imgHeight) {
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return; // Or show an error
+    }
+    QTextStream out(&file);
+    for (const auto& det : detections) {
+        float x_center = (det.box.x + det.box.width / 2.0f) / imgWidth;
+        float y_center = (det.box.y + det.box.height / 2.0f) / imgHeight;
+        float width = (float)det.box.width / imgWidth;
+        float height = (float)det.box.height / imgHeight;
+        out << det.class_id << " " << x_center << " " << y_center << " " << width << " " << height << "\n";
+    }
+    file.close();
+}
+
+void Qt_yolo_1::appendCSVRow(QTextStream& stream, const QString& fileName, const std::vector<Detection>& detections) {
+    bool detected = !detections.empty();
+    QStringList labelList;
+    for (const auto& det : detections) {
+        labelList << QString::fromStdString(det.className);
+    }
+    stream << fileName << "," << (detected ? "true" : "false") << ","" << labelList.join(", ") << ""\n";
 }
