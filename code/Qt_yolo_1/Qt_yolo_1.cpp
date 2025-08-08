@@ -213,15 +213,22 @@ void Qt_yolo_1::openCameraStream()
 {
     const QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
     QStringList cameraDescriptions;
-    for (const QCameraDevice &cameraDevice : cameras) {
+    /*for (const QCameraDevice& cameraDevice : cameras) {
         cameraDescriptions << cameraDevice.description();
+    }*/   
+	QString cameraName;
+    for (int i = 0; i < cameras.size(); i++) {
+		cameraName = "cam " + QString::number(i);
+        cameraDescriptions << cameraName;
     }
 
     bool ok;
     QString item = QInputDialog::getItem(this, tr("Select Camera"),
-                                         tr("Camera:"), cameraDescriptions, 0, false, &ok);
+        tr("Camera:"), cameraDescriptions, 0, false, &ok);
     if (ok && !item.isEmpty()) {
         int selectedCameraIndex = cameraDescriptions.indexOf(item);
+        qDebug() << " now item ->" << item;
+        qDebug() <<" now cam ->" << selectedCameraIndex;
         if (selectedCameraIndex != -1) {
             currentCameraIndex_ = selectedCameraIndex;
             currentVideoPath_.clear();
@@ -233,13 +240,30 @@ void Qt_yolo_1::openCameraStream()
                 cap_->release();
                 delete cap_;
             }
-            cap_ = new cv::VideoCapture(currentCameraIndex_);
+
+            // 嘗試用 CAP_DSHOW backend（Windows 推薦）
+            cap_ = new cv::VideoCapture(currentCameraIndex_, cv::CAP_DSHOW);
+
+            if (!cap_->isOpened()) {
+                QMessageBox::critical(this, tr("錯誤"), tr("無法開啟選取的相機裝置。"));
+                delete cap_;
+                cap_ = nullptr;
+                return;
+            }
+
             cv::Mat frame;
-            cap_->read(frame);
+            if (!cap_->read(frame) || frame.empty()) {
+                QMessageBox::critical(this, tr("錯誤"), tr("讀取相機畫面失敗。"));
+                cap_->release();
+                delete cap_;
+                cap_ = nullptr;
+                return;
+            }
+
             view->loadImage(frame);
 
             currentMediaInfo_ = QString("相機: %1, 解析度: %2x%3")
-                               .arg(item).arg(frame.cols).arg(frame.rows);
+                .arg(item).arg(frame.cols).arg(frame.rows);
             updateMediaInfoLabel();
             prevButton_->hide();
             nextButton_->hide();
@@ -247,6 +271,7 @@ void Qt_yolo_1::openCameraStream()
         }
     }
 }
+
 
 void Qt_yolo_1::openFolder()
 {
