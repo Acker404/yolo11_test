@@ -15,6 +15,7 @@
 **/CopilotIndices/
 **/Browse.VC.db
 **/x64/
+**/packages/
 
 # === Qt Creator ===
 *.pro.user
