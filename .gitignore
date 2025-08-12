@@ -85,6 +85,12 @@ Thumbs.db
 # === Jupyter Notebook ===
 .ipynb_checkpoints/
 
+# === zip ===
+*.zip
+*.7z
+*.tar.gz
+*.rar
+
 # === Git LFS Hints (可選) ===
 # git lfs track "*.pt"
 # git lfs track "*.onnx"
