@@ -11,6 +11,9 @@
 #include "imageview.h"
 #include <opencv2/videoio.hpp>
 #include <fstream>
+#include <QFile>
+#include <QDateTime>
+
 
 // Defines the options for exporting processed data.
 struct OutputOptions {
@@ -46,6 +49,7 @@ private:
     void loadFile(const QString& filePath);
     void setupFileNavigation();
     void drawDetection(cv::Mat& frame, const Detection& detection, bool drawMarkbox, bool applyMosaic);
+    void toggleVideoExport();
 
     // Helper functions for exporting
     void saveProcessedImage(const QString& path, const cv::Mat& image, const std::vector<Detection>& detections, bool mosaic, bool markbox);
@@ -78,4 +82,8 @@ private:
 
     // Export settings
     OutputOptions exportOptions_ = { true, true, false }; // Default values
+    bool isVideoExporting_ = false;
+    QFile* csvFile_ = nullptr;
+    QTextStream* csvStream_ = nullptr;
+    QString videoExportFolder_;
 };

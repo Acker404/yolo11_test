@@ -8,7 +8,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QTextStream>
-#include <Qstring>
+#include <QString>
 
 // Helper function to show the export options dialog
 OutputOptions getOutputOptionsDialog(QWidget* parent, const OutputOptions& currentOpt) {
@@ -56,7 +56,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
-    bool runOnGPU = false; 
+    bool runOnGPU = false;
     //std::string modelPath = "C:/Users/mark9/Desktop/yolo11_test/model/best.onnx";
     // ✅ 更安全：使用 Qt 取得程式目錄
     QString appDir = QCoreApplication::applicationDirPath();
@@ -79,7 +79,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
             ui.listWidget_fileList->clear();
             currentFolderPath_.clear(); // Ensure folder mode is off
         }
-    });
+        });
 
     QObject::connect(ui.Button_openVideo, &QPushButton::clicked, this, [=]() {
         QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Videos (*.mp4 *.avi)"));
@@ -90,7 +90,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
             ui.listWidget_fileList->clear();
             currentFolderPath_.clear();
         }
-    });
+        });
 
     QObject::connect(ui.Button_Detection, &QPushButton::clicked, this, &Qt_yolo_1::startDetection);
     QObject::connect(ui.Button_Detection_stop, &QPushButton::clicked, this, &Qt_yolo_1::stopDetection);
@@ -102,7 +102,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     QObject::connect(ui.Button_exportPath, &QPushButton::clicked, this, &Qt_yolo_1::handleExportPathClick);
     QObject::connect(ui.Button_export, &QPushButton::clicked, this, &Qt_yolo_1::handleExportClick);
     QObject::connect(ui.Button_exportSet, &QPushButton::clicked, this, &Qt_yolo_1::handleExportset);
-    
+
     setupFileNavigation();
 }
 
@@ -113,6 +113,11 @@ Qt_yolo_1::~Qt_yolo_1()
     if (cap_) {
         cap_->release();
         delete cap_;
+    }
+    if (csvFile_ && csvFile_->isOpen()) {
+        csvFile_->close();
+        delete csvStream_;
+        delete csvFile_;
     }
 }
 
@@ -170,7 +175,8 @@ void Qt_yolo_1::startDetection()
             drawDetection(currentImage_, detection, ui.checkBox_markbox->isChecked(), ui.checkBox_mosaic->isChecked());
         }
         view->loadImage(currentImage_);
-    } else if (!currentVideoPath_.isEmpty() || currentCameraIndex_ != -1) {
+    }
+    else if (!currentVideoPath_.isEmpty() || currentCameraIndex_ != -1) {
         isDetectionRunning_ = true;
         if (cap_ && !currentVideoPath_.isEmpty()) {
             cap_->set(cv::CAP_PROP_POS_FRAMES, 0);
@@ -187,6 +193,11 @@ void Qt_yolo_1::stopDetection()
     }
     isDetectionRunning_ = false;
     videoTimer_->stop();
+
+    if (isVideoExporting_) {
+        toggleVideoExport(); // This will handle cleanup and messaging
+    }
+
     updateMediaInfoLabel();
 }
 
@@ -195,14 +206,51 @@ void Qt_yolo_1::processVideoFrame()
     cv::Mat frame;
     if (cap_ && cap_->read(frame)) {
         frameCounter_++;
+        std::vector<Detection> output;
+
         if (frameCounter_ % ui.spinBox_detect_frame_set->value() == 0) {
-            std::vector<Detection> output = pIntf_->runInference(frame);
+            output = pIntf_->runInference(frame);
             for (const auto& detection : output) {
                 drawDetection(frame, detection, ui.checkBox_markbox->isChecked(), ui.checkBox_mosaic->isChecked());
             }
-            view->loadImage(frame);
         }
-    } else {
+
+        if (isVideoExporting_ && !output.empty()) {
+            bool isVideo = !currentVideoPath_.isEmpty();
+            QString timestamp_str;
+            QString file_base_name;
+
+            if (isVideo) {
+                double msec = cap_->get(cv::CAP_PROP_POS_MSEC);
+                timestamp_str = QString::number(msec / 1000.0, 'f', 3);
+                file_base_name = QString::number((long)msec);
+            }
+            else { // isStream
+                QDateTime now = QDateTime::currentDateTime();
+                timestamp_str = now.toString("hh:mm:ss.zzz");
+                file_base_name = now.toString("yyyyMMdd_hhmmss_zzz");
+            }
+
+            if (exportOptions_.saveImage) {
+                QString savePath = videoExportFolder_ + "/images/" + file_base_name + ".png";
+                cv::imwrite(savePath.toLocal8Bit().constData(), frame);
+            }
+            if (exportOptions_.saveLabel) {
+                QString savePath = videoExportFolder_ + "/labels/" + file_base_name + ".txt";
+                saveYoloLabels(savePath, output, frame.cols, frame.rows);
+            }
+            if (exportOptions_.saveCSV && csvStream_) {
+                QStringList labelList;
+                for (const auto& det : output) {
+                    labelList << QString::fromStdString(det.className);
+                }
+                *csvStream_ << timestamp_str << "," << "\"\"" << labelList.join(", ") << "\"\"\n";
+            }
+        }
+
+        view->loadImage(frame);
+    }
+    else {
         stopDetection();
     }
 }
@@ -219,10 +267,10 @@ void Qt_yolo_1::openCameraStream()
     QStringList cameraDescriptions;
     /*for (const QCameraDevice& cameraDevice : cameras) {
         cameraDescriptions << cameraDevice.description();
-    }*/   
-	QString cameraName;
+    }*/
+    QString cameraName;
     for (int i = 0; i < cameras.size(); i++) {
-		cameraName = "cam " + QString::number(i);
+        cameraName = "cam " + QString::number(i);
         cameraDescriptions << cameraName;
     }
 
@@ -232,7 +280,7 @@ void Qt_yolo_1::openCameraStream()
     if (ok && !item.isEmpty()) {
         int selectedCameraIndex = cameraDescriptions.indexOf(item);
         qDebug() << " now item ->" << item;
-        qDebug() <<" now cam ->" << selectedCameraIndex;
+        qDebug() << " now cam ->" << selectedCameraIndex;
         if (selectedCameraIndex != -1) {
             currentCameraIndex_ = selectedCameraIndex;
             currentVideoPath_.clear();
@@ -325,8 +373,9 @@ void Qt_yolo_1::loadFile(const QString& filePath)
         currentVideoPath_.clear();
         currentCameraIndex_ = -1;
         currentMediaInfo_ = QString("圖片: %1, 副檔名: %2, 解析度: %3x%4, 檔案大小: %5 KB")
-                           .arg(fileInfo.fileName()).arg(fileInfo.suffix()).arg(currentImage_.cols).arg(currentImage_.rows).arg(fileInfo.size() / 1024);
-    } else if (extension == "mp4" || extension == "avi") {
+            .arg(fileInfo.fileName()).arg(fileInfo.suffix()).arg(currentImage_.cols).arg(currentImage_.rows).arg(fileInfo.size() / 1024);
+    }
+    else if (extension == "mp4" || extension == "avi") {
         currentVideoPath_ = filePath;
         currentCameraIndex_ = -1;
         originalImage_.release();
@@ -341,7 +390,7 @@ void Qt_yolo_1::loadFile(const QString& filePath)
         currentImage_.release();
         double fps = cap_->get(cv::CAP_PROP_FPS);
         currentMediaInfo_ = QString("影片: %1, 副檔名: %2, 解析度: %3x%4, FPS: %5")
-                           .arg(fileInfo.fileName()).arg(fileInfo.suffix()).arg((int)cap_->get(cv::CAP_PROP_FRAME_WIDTH)).arg((int)cap_->get(cv::CAP_PROP_FRAME_HEIGHT)).arg(fps);
+            .arg(fileInfo.fileName()).arg(fileInfo.suffix()).arg((int)cap_->get(cv::CAP_PROP_FRAME_WIDTH)).arg((int)cap_->get(cv::CAP_PROP_FRAME_HEIGHT)).arg(fps);
     }
     updateMediaInfoLabel();
 }
@@ -389,6 +438,14 @@ void Qt_yolo_1::handleExportset()
 
 void Qt_yolo_1::handleExportClick()
 {
+    bool isVideoMode = !currentVideoPath_.isEmpty();
+    bool isStreamMode = currentCameraIndex_ != -1;
+
+    if (isVideoMode || isStreamMode) {
+        toggleVideoExport();
+        return;
+    }
+
     // Step 1: Basic Validation
     if (exportPath.isEmpty()) {
         QMessageBox::warning(this, tr("Export Error"), tr("Please select an export path first."));
@@ -485,6 +542,69 @@ void Qt_yolo_1::handleExportClick()
     }
     else {
         QMessageBox::warning(this, tr("Export Error"), tr("No image or image folder loaded to export."));
+    }
+}
+
+void Qt_yolo_1::toggleVideoExport()
+{
+    if (isVideoExporting_) {
+        // --- STOP EXPORT ---
+        isVideoExporting_ = false;
+        ui.Button_export->setText("輸出");
+        if (csvFile_ && csvFile_->isOpen()) {
+            csvFile_->close();
+            delete csvStream_;
+            delete csvFile_;
+            csvStream_ = nullptr;
+            csvFile_ = nullptr;
+        }
+        QMessageBox::information(this, tr("Export Stopped"), tr("Video/Stream export has been stopped."));
+
+    }
+    else {
+        // --- START EXPORT ---
+        if (exportPath.isEmpty()) {
+            QMessageBox::warning(this, tr("Export Error"), tr("Please select an export path first."));
+            return;
+        }
+
+        // 1. Determine base folder name
+        QString baseName;
+        if (!currentVideoPath_.isEmpty()) { // Video
+            baseName = QFileInfo(currentVideoPath_).baseName();
+        }
+        else { // Stream
+            baseName = QString("cam_%1_%2").arg(currentCameraIndex_).arg(QDateTime::currentDateTime().toString("MMddhh"));
+        }
+        videoExportFolder_ = exportPath + "/" + baseName;
+        QDir dir(videoExportFolder_);
+        if (!dir.exists()) {
+            dir.mkpath(".");
+        }
+
+        // 2. Create subfolders
+        QString imageExportPath = videoExportFolder_ + "/images";
+        QString labelExportPath = videoExportFolder_ + "/labels";
+        if (exportOptions_.saveImage) QDir().mkpath(imageExportPath);
+        if (exportOptions_.saveLabel) QDir().mkpath(labelExportPath);
+
+        // 3. Setup CSV
+        if (exportOptions_.saveCSV) {
+            csvFile_ = new QFile(videoExportFolder_ + "/summary.csv");
+            if (!csvFile_->open(QIODevice::WriteOnly | QIODevice::Text)) {
+                QMessageBox::warning(this, "CSV Error", "Could not create summary.csv");
+                delete csvFile_;
+                csvFile_ = nullptr;
+                return; // Don't start exporting if CSV fails
+            }
+            csvStream_ = new QTextStream(csvFile_);
+            *csvStream_ << "timestamp," << "detected_labels\n";
+        }
+
+        // 4. Update state
+        isVideoExporting_ = true;
+        ui.Button_export->setText("停止輸出");
+        QMessageBox::information(this, tr("Export Started"), tr("Video/Stream export has started."));
     }
 }
 
