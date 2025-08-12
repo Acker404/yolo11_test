@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QTextStream>
+#include <Qstring>
 
 // Helper function to show the export options dialog
 OutputOptions getOutputOptionsDialog(QWidget* parent, const OutputOptions& currentOpt) {
@@ -56,7 +57,10 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
 {
     ui.setupUi(this);
     bool runOnGPU = false; 
-    std::string modelPath = "C:/Users/mark9/Desktop/yolo11_test/model/best.onnx";
+    //std::string modelPath = "C:/Users/mark9/Desktop/yolo11_test/model/best.onnx";
+    // ✅ 更安全：使用 Qt 取得程式目錄
+    QString appDir = QCoreApplication::applicationDirPath();
+    std::string modelPath = (appDir + "/models/best.onnx").toStdString();
     std::string classesPath = "C:/Users/mark9/Desktop/yolo11_test/classes.txt";
     pIntf_ = new Inference(modelPath, cv::Size(960, 960), classesPath, runOnGPU);
 

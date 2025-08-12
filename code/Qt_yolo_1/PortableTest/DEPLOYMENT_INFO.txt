@@ -1,0 +1,13 @@
+Qt YOLO 應用程式部署包 
+建立日期：週二 2025/08/12  0:05:37.76 
+ 
+主要元件： 
+- Qt 6.x Framework 
+- ONNX Runtime 1.22.1 
+- OpenCV 4.11.0 
+- Visual C++ Runtime 
+ 
+系統需求： 
+- Windows 10/11 x64 
+- Visual C++ 2019-2022 Redistributable 
+- DirectX 11 
