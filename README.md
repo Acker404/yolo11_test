@@ -1,35 +1,59 @@
-# YOLOv11 Real-Time Object Detection
+# Smoking Detection GUI
 
-This project is a real-time object detection application that uses the YOLOv11 model to identify objects in images and videos. The application is built with C++ and Qt, and it uses the ONNX runtime for inference.
+This is a desktop application built with C++ and Qt for detecting smoking-related activities in images, videos, and live camera feeds. It uses a YOLO object detection model running on the ONNX Runtime to identify objects such as cigarettes and hands with cigarettes, providing a user-friendly interface for visualization and data export.
 
 ## Features
 
-*   **Real-time object detection**: Detects objects in images and video streams.
-*   **Image and video support**: Supports a variety of image and video formats.
-*   **Interactive UI**: Allows users to open files, start and stop detection, and view the results in real-time.
+### Multi-Source Media Processing
+- **Single Image**: Analyze individual image files (`.png`, `.jpg`, `.bmp`).
+- **Video File**: Process pre-recorded videos (`.mp4`, `.avi`).
+- **Live Stream**: Connect to a local camera for real-time detection.
+- **Batch Processing**: Analyze a folder of images and export the results for all of them.
 
-## Technologies Used
+### Detection & Visualization
+- **YOLO-based Detection**: Powered by a YOLO ONNX model optimized for smoking-related object classes.
+- **Real-Time Bounding Boxes**: Displays colored bounding boxes with class labels and confidence scores on detected objects.
+- **Privacy Mosaic**: An optional feature to apply a mosaic effect over detected areas.
 
-*   **C++**: The core application logic is written in C++.
-*   **Qt**: The graphical user interface is built with the Qt framework.
-*   **OpenCV**: Used for image and video processing.
-*   **Ultralytics YOLOv11**: The object detection model is based on the YOLOv11 architecture.
-*   **ONNX Runtime**: The model is run using the ONNX runtime for efficient inference.
+### Comprehensive Exporting
+The application features a flexible export system that adapts to the media source.
+1.  **Set Export Path**: First, select a main folder for all exports.
+2.  **Configure Options**: Choose what to save:
+    - `Image`: The frame with detections drawn on it.
+    - `Label`: A YOLO-format `.txt` file with coordinates for each detection.
+    - `CSV`: A comma-separated value file summarizing the detections.
+3.  **Export**:
+    - **For Images/Folders**: Performs a one-time export of the selected data. A progress bar is shown for folder exports.
+    - **For Videos/Streams**: Acts as a toggle. When turned on, it continuously saves detection results to a dedicated subfolder (named after the video or a timestamped camera session). Click the button again to stop exporting. The CSV file for this mode contains timestamps for each detection.
 
-## Getting Started
+## How to Use
 
-To run the application, you will need to have the following installed:
+1.  **Load Media**: Use the buttons on the right panel to:
+    - `選擇圖片` (Select Image)
+    - `選擇影片` (Select Video)
+    - `開啟資料夾` (Open Folder)
+    - `即時串流` (Live Stream)
+2.  **Start Detection**: Click `啟用偵測` (Enable Detection) to run the model. For videos and streams, this begins continuous analysis. Click `停止` (Stop) to pause.
+3.  **Adjust View**: Use the checkboxes to toggle the `標框` (Mark Box) and `馬賽克` (Mosaic) effects on the display.
+4.  **Export Results**:
+    - Click `輸出路徑` (Export Path) to choose where to save the results.
+    - Click `輸出設定` (Export Settings) to check the boxes for the data types you want.
+    - Click `輸出` (Export).
+        - If you are viewing a video or stream, this button will change to `停止輸出` (Stop Export). Click it again to end the export session.
 
-*   A C++ compiler that supports C++17
-*   Qt 6 or later
-*   OpenCV 4 or later
+## Technical Stack
 
-Once you have the prerequisites installed, you can open the project in Qt Creator and build and run the application.
+-   **Core Logic**: C++
+-   **GUI**: Qt Framework
+-   **Computer Vision & Inference**: OpenCV, ONNX Runtime
+-   **Model**: A custom-trained YOLO model for smoking detection.
 
-## Model
+## Building from Source
 
-The application uses a pretrained YOLOv11s model that has been exported to the ONNX format. The model is included in the `model` directory.
+### Prerequisites
+- A C++ compiler supporting C++17
+- Qt (5 or 6)
+- OpenCV 4 or later
+- ONNX Runtime
 
-## References
-
-*   **Ultralytics YOLO**: https://github.com/ultralytics/ultralytics
+Once the prerequisites are installed, you can open the `.pro` or `CMakeLists.txt` file in Qt Creator to build and run the project.

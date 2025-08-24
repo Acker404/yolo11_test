@@ -13,7 +13,7 @@ Inference::Inference(const std::string &onnxModelPath, const cv::Size &modelInpu
     //loadClassesFromFile(); //The classes are hard-coded for this example
 }
 
-std::vector<Detection> Inference::runInference(const cv::Mat &input)
+std::vector<Detection> Inference::runInference(const cv::Mat& input)
 {
     cv::Mat modelInput = input;
     int pad_x, pad_y;
@@ -22,7 +22,7 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
         modelInput = formatToSquare(modelInput, &pad_x, &pad_y, &scale);
 
     cv::Mat blob;
-    cv::dnn::blobFromImage(modelInput, blob, 1.0/255.0, modelShape, cv::Scalar(), true, false);
+    cv::dnn::blobFromImage(modelInput, blob, 1.0 / 255.0, modelShape, cv::Scalar(), true, false);
     net.setInput(blob);
 
     std::vector<cv::Mat> outputs;
@@ -32,21 +32,21 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
     int dimensions = outputs[0].size[2];
 
     bool yolov8 = false;
-    // yolov5 has an output of shape (batchSize, 25200, 85) (Num classes + box[x,y,w,h] + confidence[c])
-    // yolov8 has an output of shape (batchSize, 84,  8400) (Num classes + box[x,y,w,h])
-    if (dimensions > rows) // Check if the shape[2] is more than shape[1] (yolov8)
+
+    // 檢查是否為 YOLOv8 格式
+    // 您的模型輸出: [1, 7, 18900] - 7個維度 (4個box座標 + 3個類別分數)
+    if (dimensions > rows) // shape[2] > shape[1] 表示 YOLOv8 格式
     {
         yolov8 = true;
-        rows = outputs[0].size[2];
-        dimensions = outputs[0].size[1];
-        // 你的模型為 [1, 7, 18900]，需要 reshape 為 [18900, 7]
-        outputs[0] = outputs[0].reshape(1, 7); // (7, 18900)
-        cv::transpose(outputs[0], outputs[0]); // (18900, 7)
+        rows = outputs[0].size[2];        // 18900 個預測框
+        dimensions = outputs[0].size[1];   // 7 個維度
 
-        //outputs[0] = outputs[0].reshape(1, dimensions);
-        //cv::transpose(outputs[0], outputs[0]);
+        // 重塑輸出張量從 [1, 7, 18900] 到 [18900, 7]
+        outputs[0] = outputs[0].reshape(1, dimensions); // [7, 18900]
+        cv::transpose(outputs[0], outputs[0]);          // [18900, 7]
     }
-    float *data = (float *)outputs[0].data;
+
+    float* data = (float*)outputs[0].data;
 
     std::vector<int> class_ids;
     std::vector<float> confidences;
@@ -56,41 +56,55 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
     {
         if (yolov8)
         {
-            float confidence = data[4];
+            // YOLOv8 抽煙檢測模型格式: [x, y, w, h, class1_score, class2_score, class3_score]
+            // 其中: class1=cigarette, class2=hand_with_cigarette, class3=mouth_with_cigarette
+
+            // 提取邊界框座標
+            float x = data[0];
+            float y = data[1];
+            float w = data[2];
+            float h = data[3];
+
+            // 提取類別分數 (從索引4開始的3個類別)
+            float* class_scores = data + 4;  // 指向 [class1_score, class2_score, class3_score]
+
+            // 找到最高分數的類別
+            cv::Mat scores(1, classes.size(), CV_32FC1, class_scores);
+            cv::Point class_id;
+            double max_class_score;
+            minMaxLoc(scores, 0, &max_class_score, 0, &class_id);
+
+            // 使用最高類別分數作為置信度 (YOLOv8沒有單獨的objectness score)
+            float confidence = max_class_score;
+
+            // 檢查置信度閾值
             if (confidence >= modelConfidenceThreshold)
             {
-                float* class_scores = data + 5;
-                cv::Mat scores(1, classes.size(), CV_32FC1, class_scores);
-                cv::Point class_id;
-                double max_class_score;
-                minMaxLoc(scores, 0, &max_class_score, 0, &class_id);
+                confidences.push_back(confidence);
+                class_ids.push_back(class_id.x);
 
-                if (max_class_score > modelScoreThreshold)
-                {
-                    confidences.push_back(confidence * max_class_score);
-                    class_ids.push_back(class_id.x);
+                // 座標轉換: 中心點格式轉換為左上角格式
+                int left = int((x - 0.5 * w - pad_x) / scale);
+                int top = int((y - 0.5 * h - pad_y) / scale);
+                int width = int(w / scale);
+                int height = int(h / scale);
 
-                    float x = data[0];
-                    float y = data[1];
-                    float w = data[2];
-                    float h = data[3];
+                // 確保邊界框在圖像範圍內
+                left = std::max(0, left);
+                top = std::max(0, top);
+                width = std::min(width, input.cols - left);
+                height = std::min(height, input.rows - top);
 
-                    int left = int((x - 0.5 * w - pad_x) / scale);
-                    int top = int((y - 0.5 * h - pad_y) / scale);
-                    int width = int(w / scale);
-                    int height = int(h / scale);
-
-                    boxes.push_back(cv::Rect(left, top, width, height));
-                }
+                boxes.push_back(cv::Rect(left, top, width, height));
             }
         }
-        else // yolov5
+        else // YOLOv5 格式 (保持原有邏輯)
         {
             float confidence = data[4];
 
             if (confidence >= modelConfidenceThreshold)
             {
-                float *classes_scores = data+5;
+                float* classes_scores = data + 5;
 
                 cv::Mat scores(1, classes.size(), CV_32FC1, classes_scores);
                 cv::Point class_id;
@@ -110,7 +124,6 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
 
                     int left = int((x - 0.5 * w - pad_x) / scale);
                     int top = int((y - 0.5 * h - pad_y) / scale);
-
                     int width = int(w / scale);
                     int height = int(h / scale);
 
@@ -122,8 +135,9 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
         data += dimensions;
     }
 
+    // 非最大值抑制 (NMS)
     std::vector<int> nms_result;
-    cv::dnn::NMSBoxes(boxes, confidences, modelScoreThreshold, modelNMSThreshold, nms_result);
+    cv::dnn::NMSBoxes(boxes, confidences, modelConfidenceThreshold, modelNMSThreshold, nms_result);
 
     std::vector<Detection> detections{};
     for (unsigned long i = 0; i < nms_result.size(); ++i)
@@ -134,12 +148,20 @@ std::vector<Detection> Inference::runInference(const cv::Mat &input)
         result.class_id = class_ids[idx];
         result.confidence = confidences[idx];
 
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<int> dis(100, 255);
-        result.color = cv::Scalar(dis(gen),
-                                  dis(gen),
-                                  dis(gen));
+        // 為不同類別設置不同顏色
+        if (result.class_id == 0) // cigarette - 紅色
+            result.color = cv::Scalar(0, 0, 255);
+        else if (result.class_id == 1) // hand_with_cigarette - 綠色
+            result.color = cv::Scalar(0, 255, 0);
+        else if (result.class_id == 2) // mouth_with_cigarette - 藍色
+            result.color = cv::Scalar(255, 0, 0);
+        else // 其他類別 - 隨機顏色
+        {
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_int_distribution<int> dis(100, 255);
+            result.color = cv::Scalar(dis(gen), dis(gen), dis(gen));
+        }
 
         result.className = classes[result.class_id];
         result.box = boxes[idx];

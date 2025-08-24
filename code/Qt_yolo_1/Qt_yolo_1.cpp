@@ -60,8 +60,10 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     //std::string modelPath = "C:/Users/mark9/Desktop/yolo11_test/model/best.onnx";
     // ✅ 更安全：使用 Qt 取得程式目錄
     QString appDir = QCoreApplication::applicationDirPath();
+    qDebug() << cv::getBuildInformation();
     std::string modelPath = (appDir + "/models/best.onnx").toStdString();
-    std::string classesPath = "C:/Users/mark9/Desktop/yolo11_test/classes.txt";
+    //std::string classesPath = "C:/Users/mark9/Desktop/yolo11_test/classes.txt";
+    std::string classesPath = "";
     pIntf_ = new Inference(modelPath, cv::Size(960, 960), classesPath, runOnGPU);
 
     view = new ImageView(this);
@@ -102,6 +104,18 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     QObject::connect(ui.Button_exportPath, &QPushButton::clicked, this, &Qt_yolo_1::handleExportPathClick);
     QObject::connect(ui.Button_export, &QPushButton::clicked, this, &Qt_yolo_1::handleExportClick);
     QObject::connect(ui.Button_exportSet, &QPushButton::clicked, this, &Qt_yolo_1::handleExportset);
+
+    connect(ui.horizontalSlider_ConfidenceThreshold, &QSlider::valueChanged, this, &Qt_yolo_1::updateConfidenceThreshold);
+    connect(ui.horizontalSlider_ScoreThreshold, &QSlider::valueChanged, this, &Qt_yolo_1::updateScoreThreshold);
+    connect(ui.horizontalSlider_NMSThreshold, &QSlider::valueChanged, this, &Qt_yolo_1::updateNMSThreshold);
+
+    // Initialize sliders and labels
+    ui.horizontalSlider_ConfidenceThreshold->setValue(10);
+    ui.horizontalSlider_ScoreThreshold->setValue(45);
+    ui.horizontalSlider_NMSThreshold->setValue(10);
+    updateConfidenceThreshold(ui.horizontalSlider_ConfidenceThreshold->value());
+    updateScoreThreshold(ui.horizontalSlider_ScoreThreshold->value());
+    updateNMSThreshold(ui.horizontalSlider_NMSThreshold->value());
 
     setupFileNavigation();
 }
@@ -244,7 +258,7 @@ void Qt_yolo_1::processVideoFrame()
                 for (const auto& det : output) {
                     labelList << QString::fromStdString(det.className);
                 }
-                *csvStream_ << timestamp_str << "," << "\"\"" << labelList.join(", ") << "\"\"\n";
+                *csvStream_ << timestamp_str << "," << "" << labelList.join(", ") << "" << "\n";
             }
         }
 
@@ -383,7 +397,7 @@ void Qt_yolo_1::loadFile(const QString& filePath)
             cap_->release();
             delete cap_;
         }
-        cap_ = new cv::VideoCapture(currentVideoPath_.toLocal8Bit().constData());
+        cap_ = new cv::VideoCapture(currentVideoPath_.toLocal8Bit().constData(), cv::CAP_ANY);
         cv::Mat frame;
         cap_->read(frame);
         view->loadImage(frame);
@@ -641,4 +655,25 @@ void Qt_yolo_1::appendCSVRow(QTextStream& stream, const QString& fileName, const
         labelList << QString::fromStdString(det.className);
     }
     stream << fileName << "," << (detected ? "true" : "false") << "," << labelList.join(", ") << "\n";
+}
+
+void Qt_yolo_1::updateConfidenceThreshold(int value)
+{
+    float floatValue = value / 100.0f;
+    pIntf_->setConfidenceThreshold(floatValue);
+    ui.label_ConfidenceThreshold->setText(QString("ConfidenceThreshold: %1").arg(floatValue, 0, 'f', 2));
+}
+
+void Qt_yolo_1::updateScoreThreshold(int value)
+{
+    float floatValue = value / 100.0f;
+    pIntf_->setScoreThreshold(floatValue);
+    ui.label_ScoreThreshold->setText(QString("ScoreThreshold: %1").arg(floatValue, 0, 'f', 2));
+}
+
+void Qt_yolo_1::updateNMSThreshold(int value)
+{
+    float floatValue = value / 100.0f;
+    pIntf_->setNMSThreshold(floatValue);
+    ui.label_NMSthreshold->setText(QString("NMSThreshold: %1").arg(floatValue, 0, 'f', 2));
 }

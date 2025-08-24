@@ -28,6 +28,10 @@ public:
     Inference(const std::string &onnxModelPath, const cv::Size &modelInputShape = {640, 640}, const std::string &classesTxtFile = "", const bool &runWithCuda = true);
     std::vector<Detection> runInference(const cv::Mat &input);
 
+    void setConfidenceThreshold(float conf) { modelConfidenceThreshold = conf; }
+    void setScoreThreshold(float score) { modelScoreThreshold = score; }
+    void setNMSThreshold(float nms) { modelNMSThreshold = nms; }
+
 private:
     void loadClassesFromFile();
     void loadOnnxNetwork();
@@ -42,9 +46,9 @@ private:
 
     cv::Size2f modelShape{};
 
-    float modelConfidenceThreshold {0.25};
+    float modelConfidenceThreshold {0.10};
     float modelScoreThreshold      {0.45};
-    float modelNMSThreshold        {0.50};
+    float modelNMSThreshold        {0.10};
 
     bool letterBoxForSquare = true;
 

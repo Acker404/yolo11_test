@@ -43,6 +43,9 @@ private slots:
     void handleExportPathClick();
     void handleExportClick();
     void handleExportset();
+    void updateConfidenceThreshold(int value);
+    void updateScoreThreshold(int value);
+    void updateNMSThreshold(int value);
 
 private:
     void updateMediaInfoLabel();
