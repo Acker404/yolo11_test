@@ -15,7 +15,7 @@ MinVersion=10.0
 ; --- 使用相對路徑 ---
 SetupIconFile=code\Qt_yolo_1\x64\Release\icon.ico
 ; --- 請填寫您的真實資訊 ---
-AppPublisher=您的公司或團隊名稱
+AppPublisher=yuan403
 AppSupportURL=https://your-website.com
 AppUpdatesURL=https://your-website.com/updates
 WizardStyle=modern

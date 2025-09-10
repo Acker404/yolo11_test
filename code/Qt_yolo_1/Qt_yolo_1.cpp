@@ -56,6 +56,10 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
+
+    ui.spinBox_detect_frame_set->setMinimum(1);
+    ui.spinBox_detect_frame_set->setSingleStep(5);
+
     bool runOnGPU = false;
     //std::string modelPath = "C:/Users/mark9/Desktop/yolo11_test/model/best.onnx";
     // ✅ 更安全：使用 Qt 取得程式目錄
@@ -94,7 +98,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
         }
         });
 
-    QObject::connect(ui.Button_Detection, &QPushButton::clicked, this, &Qt_yolo_1::startDetection);
+    QObject::connect(ui.Button_Detection, &QPushButton::clicked, this, &Qt_yolo_1::startDetection);                                                                          
     QObject::connect(ui.Button_Detection_stop, &QPushButton::clicked, this, &Qt_yolo_1::stopDetection);
     QObject::connect(ui.Button_stream, &QPushButton::clicked, this, &Qt_yolo_1::openCameraStream);
     QObject::connect(ui.Button_openFolder, &QPushButton::clicked, this, &Qt_yolo_1::openFolder);
