@@ -9,6 +9,9 @@
 #include <QSettings>
 #include <QTextStream>
 #include <QString>
+#include <QDirIterator>
+#include <QButtonGroup>
+#include <QRadioButton>
 
 // Helper function to show the export options dialog
 OutputOptions getOutputOptionsDialog(QWidget* parent, const OutputOptions& currentOpt) {
@@ -112,6 +115,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     connect(ui.horizontalSlider_ConfidenceThreshold, &QSlider::valueChanged, this, &Qt_yolo_1::updateConfidenceThreshold);
     connect(ui.horizontalSlider_ScoreThreshold, &QSlider::valueChanged, this, &Qt_yolo_1::updateScoreThreshold);
     connect(ui.horizontalSlider_NMSThreshold, &QSlider::valueChanged, this, &Qt_yolo_1::updateNMSThreshold);
+    
 
     // Initialize sliders and labels
     ui.horizontalSlider_ConfidenceThreshold->setValue(10);
@@ -680,4 +684,83 @@ void Qt_yolo_1::updateNMSThreshold(int value)
     float floatValue = value / 100.0f;
     pIntf_->setNMSThreshold(floatValue);
     ui.label_NMSthreshold->setText(QString("NMSThreshold: %1").arg(floatValue, 0, 'f', 2));
+}
+
+void Qt_yolo_1::on_pushButton_select_model_clicked()
+{
+    QString appDir = QCoreApplication::applicationDirPath();
+    QString modelsDir = appDir + "/models";
+    QDir dir(modelsDir);
+    if (!dir.exists()) {
+        QMessageBox::warning(this, "Error", "Models directory not found:\n" + modelsDir);
+        return;
+    }
+
+    QDirIterator it(modelsDir, QStringList() << "*.onnx", QDir::Files, QDirIterator::Subdirectories);
+    QStringList modelFiles;
+    while (it.hasNext()) {
+        modelFiles << it.next();
+    }
+
+    if (modelFiles.isEmpty()) {
+        QMessageBox::information(this, "No Models Found", "No .onnx models found in " + modelsDir);
+        return;
+    }
+
+    // Make paths relative to the models directory
+    for (QString& modelFile : modelFiles) {
+        modelFile = dir.relativeFilePath(modelFile);
+    }
+
+    QString selectedModel = selectModelDialog(modelFiles);
+
+    if (!selectedModel.isEmpty()) {
+        if (pIntf_) {
+            delete pIntf_;
+        }
+        std::string modelPath = (modelsDir + "/" + selectedModel).toStdString();
+        bool runOnGPU = false; // You might want to make this a UI option
+        std::string classesPath = "";
+        pIntf_ = new Inference(modelPath, cv::Size(960, 960), classesPath, runOnGPU);
+        
+        // You might want to reset confidence/NMS thresholds here if they differ per model
+        updateConfidenceThreshold(ui.horizontalSlider_ConfidenceThreshold->value());
+        updateScoreThreshold(ui.horizontalSlider_ScoreThreshold->value());
+        updateNMSThreshold(ui.horizontalSlider_NMSThreshold->value());
+
+        QMessageBox::information(this, "Model Loaded", "Successfully loaded model:\n" + selectedModel);
+    }
+}
+
+QString Qt_yolo_1::selectModelDialog(const QStringList& models)
+{
+    QDialog dialog(this);
+    dialog.setWindowTitle("Select Model");
+
+    QVBoxLayout* layout = new QVBoxLayout(&dialog);
+    QButtonGroup* buttonGroup = new QButtonGroup(&dialog);
+
+    for (const QString& model : models) {
+        QRadioButton* radio = new QRadioButton(model, &dialog);
+        layout->addWidget(radio);
+        buttonGroup->addButton(radio);
+    }
+
+    if (!models.isEmpty()) {
+        buttonGroup->buttons().first()->setChecked(true);
+    }
+
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dialog);
+    connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    layout->addWidget(buttonBox);
+
+    if (dialog.exec() == QDialog::Accepted) {
+        QAbstractButton* checkedButton = buttonGroup->checkedButton();
+        if (checkedButton) {
+            return checkedButton->text();
+        }
+    }
+
+    return QString();
 }

@@ -153,6 +153,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="pushButton_select_model">
+        <property name="text">
+         <string>模型選擇</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QVBoxLayout" name="verticalLayout_detect" stretch="0,0">
         <property name="spacing">
          <number>8</number>

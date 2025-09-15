@@ -46,6 +46,7 @@ private slots:
     void updateConfidenceThreshold(int value);
     void updateScoreThreshold(int value);
     void updateNMSThreshold(int value);
+    void on_pushButton_select_model_clicked();
 
 private:
     void updateMediaInfoLabel();
@@ -58,6 +59,7 @@ private:
     void saveProcessedImage(const QString& path, const cv::Mat& image, const std::vector<Detection>& detections, bool mosaic, bool markbox);
     void saveYoloLabels(const QString& path, const std::vector<Detection>& detections, int imgWidth, int imgHeight);
     void appendCSVRow(QTextStream& stream, const QString& fileName, const std::vector<Detection>& detections);
+    QString selectModelDialog(const QStringList& models);
 
 
     Ui::Qt_yolo_1Class ui;
