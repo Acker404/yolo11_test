@@ -73,6 +73,7 @@ private:
     QString exportPath;
     int currentCameraIndex_ = -1;
     QString currentMediaInfo_;
+    QString currentModelName_;
     bool isDetectionRunning_ = false;
     QTimer* videoTimer_ = nullptr;
     cv::VideoCapture* cap_ = nullptr;

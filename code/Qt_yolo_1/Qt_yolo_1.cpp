@@ -69,6 +69,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     QString appDir = QCoreApplication::applicationDirPath();
     qDebug() << cv::getBuildInformation();
     std::string modelPath = (appDir + "/models/best.onnx").toStdString();
+    currentModelName_ = "best.onnx";
     //std::string classesPath = "C:/Users/mark9/Desktop/yolo11_test/classes.txt";
     std::string classesPath = "";
     pIntf_ = new Inference(modelPath, cv::Size(960, 960), classesPath, runOnGPU);
@@ -126,6 +127,7 @@ Qt_yolo_1::Qt_yolo_1(QWidget* parent)
     updateNMSThreshold(ui.horizontalSlider_NMSThreshold->value());
 
     setupFileNavigation();
+    updateMediaInfoLabel();
 }
 
 Qt_yolo_1::~Qt_yolo_1()
@@ -289,8 +291,18 @@ void Qt_yolo_1::processVideoFrame()
 
 void Qt_yolo_1::updateMediaInfoLabel()
 {
-    QString statusText = isDetectionRunning_ ? "偵測中" : "未偵測";
-    ui.label_media_info->setText(currentMediaInfo_ + "\n" + statusText);
+    QString exportOptionsText = QString("Output settings (csv: %1 image: %2 label: %3)")
+                                    .arg(exportOptions_.saveCSV ? 'T' : 'F')
+                                    .arg(exportOptions_.saveImage ? 'T' : 'F')
+                                    .arg(exportOptions_.saveLabel ? 'T' : 'F');
+
+    QString modelText = "Model: " + currentModelName_;
+
+    QString fullText = currentMediaInfo_ + "\n" +
+                       modelText + "\n" +
+                       exportOptionsText;
+
+    ui.label_media_info->setText(fullText);
 }
 
 void Qt_yolo_1::openCameraStream()
@@ -466,6 +478,7 @@ void Qt_yolo_1::handleExportPathClick()
 void Qt_yolo_1::handleExportset()
 {
     exportOptions_ = getOutputOptionsDialog(this, exportOptions_);
+    updateMediaInfoLabel();
 }
 
 void Qt_yolo_1::handleExportClick()
@@ -735,6 +748,7 @@ void Qt_yolo_1::on_pushButton_select_model_clicked()
     QString selectedModel = selectModelDialog(modelFiles);
 
     if (!selectedModel.isEmpty()) {
+        currentModelName_ = selectedModel;
         if (pIntf_) {
             delete pIntf_;
         }
@@ -749,6 +763,7 @@ void Qt_yolo_1::on_pushButton_select_model_clicked()
         updateNMSThreshold(ui.horizontalSlider_NMSThreshold->value());
 
         QMessageBox::information(this, "Model Loaded", "Successfully loaded model:\n" + selectedModel);
+        updateMediaInfoLabel();
     }
 }
 
