@@ -58,7 +58,7 @@ private:
     // Helper functions for exporting
     void saveProcessedImage(const QString& path, const cv::Mat& image, const std::vector<Detection>& detections, bool mosaic, bool markbox);
     void saveYoloLabels(const QString& path, const std::vector<Detection>& detections, int imgWidth, int imgHeight);
-    void appendCSVRow(QTextStream& stream, const QString& fileName, const std::vector<Detection>& detections);
+    void appendCSVRow(QTextStream& stream, const QString& orgFileName, const QString& exportFileName, const std::vector<Detection>& detections);
     QString selectModelDialog(const QStringList& models);
 
 

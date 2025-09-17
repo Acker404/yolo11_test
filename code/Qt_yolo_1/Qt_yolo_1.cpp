@@ -253,20 +253,30 @@ void Qt_yolo_1::processVideoFrame()
                 file_base_name = now.toString("yyyyMMdd_hhmmss_zzz");
             }
 
+            QString exportFileName;
             if (exportOptions_.saveImage) {
                 QString savePath = videoExportFolder_ + "/images/" + file_base_name + ".png";
                 cv::imwrite(savePath.toLocal8Bit().constData(), frame);
+                exportFileName = file_base_name + ".png";
             }
             if (exportOptions_.saveLabel) {
                 QString savePath = videoExportFolder_ + "/labels/" + file_base_name + ".txt";
                 saveYoloLabels(savePath, output, frame.cols, frame.rows);
             }
             if (exportOptions_.saveCSV && csvStream_) {
-                QStringList labelList;
-                for (const auto& det : output) {
-                    labelList << QString::fromStdString(det.className);
+                if (output.empty()) {
+                    *csvStream_ << timestamp_str << "," << exportFileName << ",false,,,,,,\n";
+                } else {
+                    for (const auto& det : output) {
+                        *csvStream_ << timestamp_str << "," << exportFileName << ",true,"
+                                   << QString::fromStdString(det.className) << ","
+                                   << det.confidence << ","
+                                   << det.box.x << ","
+                                   << det.box.x + det.box.width << ","
+                                   << det.box.y << ","
+                                   << det.box.y + det.box.height << "\n";
+                    }
                 }
-                *csvStream_ << timestamp_str << "," << "" << labelList.join(", ") << "" << "\n";
             }
         }
 
@@ -495,7 +505,7 @@ void Qt_yolo_1::handleExportClick()
             }
             else {
                 csvStream.setDevice(&csvFile);
-                csvStream << "filename,detected,labels\n";
+                csvStream << "FileName(org),FileName(export),Detected,Label_name,Confidence,XMin,Xmax,YMin,YMax\n";
             }
         }
 
@@ -519,16 +529,18 @@ void Qt_yolo_1::handleExportClick()
             QFileInfo fileInfo(fileName);
             QString baseName = fileInfo.baseName();
 
+            QString exportFileName;
             if (exportOptions_.saveImage) {
                 QString savePath = imageExportPath + "/" + baseName + "_detected.png";
                 saveProcessedImage(savePath, image, detections, ui.checkBox_mosaic->isChecked(), ui.checkBox_markbox->isChecked());
+                exportFileName = baseName + "_detected.png";
             }
             if (exportOptions_.saveLabel) {
                 QString savePath = labelExportPath + "/" + baseName + ".txt";
                 saveYoloLabels(savePath, detections, image.cols, image.rows);
             }
             if (exportOptions_.saveCSV && csvFile.isOpen()) {
-                appendCSVRow(csvStream, fileName, detections);
+                appendCSVRow(csvStream, fileName, exportFileName, detections);
             }
 
             index++;
@@ -620,7 +632,7 @@ void Qt_yolo_1::toggleVideoExport()
                 return; // Don't start exporting if CSV fails
             }
             csvStream_ = new QTextStream(csvFile_);
-            *csvStream_ << "timestamp," << "detected_labels\n";
+            *csvStream_ << "Timestamp,FileName(export),Detected,Label_name,Confidence,XMin,Xmax,YMin,YMax\n";
         }
 
         // 4. Update state
@@ -656,13 +668,21 @@ void Qt_yolo_1::saveYoloLabels(const QString& path, const std::vector<Detection>
     file.close();
 }
 
-void Qt_yolo_1::appendCSVRow(QTextStream& stream, const QString& fileName, const std::vector<Detection>& detections) {
-    bool detected = !detections.empty();
-    QStringList labelList;
-    for (const auto& det : detections) {
-        labelList << QString::fromStdString(det.className);
+void Qt_yolo_1::appendCSVRow(QTextStream& stream, const QString& orgFileName, const QString& exportFileName, const std::vector<Detection>& detections) {
+    if (detections.empty()) {
+        stream << orgFileName << "," << exportFileName << ",false,,,,,,\n";
+        return;
     }
-    stream << fileName << "," << (detected ? "true" : "false") << "," << labelList.join(", ") << "\n";
+
+    for (const auto& det : detections) {
+        stream << orgFileName << "," << exportFileName << ",true,"
+               << QString::fromStdString(det.className) << ","
+               << det.confidence << ","
+               << det.box.x << ","
+               << det.box.x + det.box.width << ","
+               << det.box.y << ","
+               << det.box.y + det.box.height << "\n";
+    }
 }
 
 void Qt_yolo_1::updateConfidenceThreshold(int value)
