@@ -1,6 +1,6 @@
 # smkoing detect
 
-A professional desktop application built with C++ and the Qt framework for real-time detection of smoking-related activities. This tool leverages the power of YOLOv8 models via the ONNX Runtime to analyze images, videos, and live camera feeds, providing a rich user interface for visualizing results and exporting data.
+A professional desktop application built with C++ and the Qt framework for real-time detection of smoking-related activities. This tool leverages the power of YOLOv11 models via the ONNX Runtime to analyze images, videos, and live camera feeds, providing a rich user interface for visualizing results and exporting data.
 
 ## Key Features
 
